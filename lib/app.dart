@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'main/s_home.dart';
+import 'package:playground/screen/main/s_home.dart';
 
 class WiseApp extends StatefulWidget {
   const WiseApp({super.key});
@@ -13,6 +12,9 @@ class _WiseAppState extends State<WiseApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.black)),
       home: HomeScreen(),
     );
   }
