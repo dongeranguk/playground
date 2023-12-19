@@ -6,6 +6,7 @@ class Mail {
   final String to;
   final DateTime createdAt;
   DateTime? updatedAt;
+  bool isRead;
 
   Mail(
     this.id,
@@ -15,5 +16,5 @@ class Mail {
     this.to,
     this.createdAt,
     this.updatedAt,
-  );
+  ) : isRead = false;
 }
