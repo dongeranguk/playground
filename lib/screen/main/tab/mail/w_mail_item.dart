@@ -36,7 +36,7 @@ class _MailItemState extends State<MailItem> {
                   Text(widget.mail.content), // TODO : 메일 내용의 길이가 길면 화면을 벗어나 오류가 발생하므로 특정 길이를 벗어나면, 이후 내용은 생략되도록 해보자.
                 ],
               ),
-              Spacer(),
+              const Spacer(),
               Text(widget.mail.createdAt.toString()), // TODO : 시간이 너무 자세하게 나와 화면에서 너무 많이 차지하므로 이 또한 어느정도 생략 필요
             ],
           ),

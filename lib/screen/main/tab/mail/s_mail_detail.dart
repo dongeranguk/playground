@@ -12,17 +12,17 @@ class MailDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final _mail = mailList[id];
     final List<Widget> _actions = [
-      Icon(CupertinoIcons.arrowshape_turn_up_left_fill),
+      const Icon(CupertinoIcons.arrowshape_turn_up_left_fill),
       _mail.isRead
-          ? Icon(CupertinoIcons.envelope_open)
-          : Icon(CupertinoIcons.envelope),
-      Icon(CupertinoIcons.delete),
-      Icon(CupertinoIcons.ellipsis_vertical),
+          ? const Icon(CupertinoIcons.envelope_open)
+          : const Icon(CupertinoIcons.envelope),
+      const Icon(CupertinoIcons.delete),
+      const Icon(CupertinoIcons.ellipsis_vertical),
     ];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('메일'),
+        title: const Text('메일'),
         actions: _actions, // TODO : _actions 아이콘마다 패딩 값 주기
       ),
       body: Padding(
@@ -34,12 +34,12 @@ class MailDetail extends StatelessWidget {
                 child: Text(_mail.title,
                     style: const TextStyle(
                         fontSize: 15, fontWeight: FontWeight.bold))),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             LabeledRoundedContainer(
               label: '보낸사람',
               value: _mail.to,
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             LabeledRoundedContainer(
               label: '받는사람',
               value: _mail.from,
