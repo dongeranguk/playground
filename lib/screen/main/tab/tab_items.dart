@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:playground/screen/main/tab/f_board.dart';
-import 'package:playground/screen/main/tab/f_mail.dart';
+import 'package:playground/screen/main/tab/board/f_board.dart';
+import 'package:playground/screen/main/tab/mail/f_mail.dart';
 
-import 'f_calendar.dart';
-import 'f_home.dart';
+import 'calendar/f_calendar.dart';
+import 'home/f_home.dart';
 
 enum TabItem {
   home(Icons.home, '홈', HomeFragment(tabName: '홈')),
