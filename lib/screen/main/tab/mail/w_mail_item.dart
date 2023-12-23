@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:playground/common/dart/extension/date_extension.dart';
 import 'package:playground/screen/main/tab/mail/s_mail_detail.dart';
+import 'package:playground/screen/main/tab/mail/vo/vo_mail_dummy.dart';
 import 'package:playground/screen/main/tab/mail/vo/vo_simple_mail.dart';
 
 class MailItem extends StatefulWidget {
@@ -12,10 +15,52 @@ class MailItem extends StatefulWidget {
 }
 
 class _MailItemState extends State<MailItem> {
+  late String content;
+  late bool _isRead;
+  late TextStyle mailStyle;
+
+  @override
+  void initState() {
+    content = widget.mail.content.length > 15
+        ? '${widget.mail.content.substring(0, 15)}...'
+        : widget.mail.content;
+
+    _isRead = widget.mail.isRead;
+
+    if (!_isRead) {
+      mailStyle = const TextStyle(fontWeight: FontWeight.bold);
+    } else {
+      mailStyle = const TextStyle();
+    }
+
+    super.initState();
+  }
+
+  void setRead() => setState(() {
+        if (_isRead != mailList[widget.mail.id].isRead) {
+          _isRead = !_isRead;
+        }
+
+        if (!_isRead) {
+          mailStyle = const TextStyle(fontWeight: FontWeight.bold);
+        } else {
+          mailStyle = const TextStyle();
+        }
+      });
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => MailDetail(id: widget.mail.id))) ,
+      onTap: () {
+        mailList[widget.mail.id].isRead = true;
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MailDetail(
+                      id: widget.mail.id,
+                      voidCallback: setRead,
+                    )));
+      },
       child: Container(
         width: double.infinity,
         height: 70,
@@ -32,12 +77,21 @@ class _MailItemState extends State<MailItem> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(widget.mail.from),
-                  Text(widget.mail.content), // TODO : 메일 내용의 길이가 길면 화면을 벗어나 오류가 발생하므로 특정 길이를 벗어나면, 이후 내용은 생략되도록 해보자.
+                  Text(
+                    widget.mail.from,
+                    style: mailStyle,
+                  ),
+                  Text(
+                    content,
+                    style: mailStyle,
+                  ),
                 ],
               ),
               const Spacer(),
-              Text(widget.mail.createdAt.toString()), // TODO : 시간이 너무 자세하게 나와 화면에서 너무 많이 차지하므로 이 또한 어느정도 생략 필요
+              Text(
+                widget.mail.createdAt.customFormat(),
+                style: mailStyle,
+              )
             ],
           ),
         ),

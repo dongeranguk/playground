@@ -39,7 +39,8 @@ class _MailFragmentState extends State<MailFragment> {
                   element.id,
                   element.from,
                   element.content,
-                  DateFormat('yyyy년 MM월 dd일 hh:mm:dd').format(element.createdAt),
+                  element.createdAt,
+                  element.isRead,
                 )),
               )
               .toList(),

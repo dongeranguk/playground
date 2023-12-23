@@ -2,7 +2,8 @@ class SimpleMail {
   final int id;
   final String from;
   final String content;
-  final String createdAt;
+  final DateTime createdAt;
+  bool isRead;
 
-  const SimpleMail(this.id, this.from, this.content, this.createdAt);
+  SimpleMail(this.id, this.from, this.content, this.createdAt, this.isRead);
 }

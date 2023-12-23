@@ -1,29 +1,102 @@
+import 'dart:async';
+
+import 'package:after_layout/after_layout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:playground/common/dart/extension/date_extension.dart';
+import 'package:playground/screen/main/tab/mail/vo/vo_mail.dart';
 import 'package:playground/screen/main/tab/mail/vo/vo_mail_dummy.dart';
 
-class MailDetail extends StatelessWidget {
+class MailDetail extends StatefulWidget {
   final int id;
+  final VoidCallback voidCallback;
 
-  const MailDetail({required this.id, super.key});
+  const MailDetail({required this.id, required this.voidCallback, super.key});
+
+  @override
+  State<MailDetail> createState() => _MailDetailState();
+}
+
+class _MailDetailState extends State<MailDetail> with AfterLayoutMixin {
+  late Mail _mail;
+  late bool _isRead;
+
+  @override
+  FutureOr<void> afterFirstLayout(BuildContext context) {
+    widget.voidCallback.call();
+  }
+
+  @override
+  void initState() {
+    _mail = mailList[widget.id];
+    _isRead = _mail.isRead;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final _mail = mailList[id];
-    final List<Widget> _actions = [
-      const Icon(CupertinoIcons.arrowshape_turn_up_left_fill),
-      _mail.isRead
-          ? const Icon(CupertinoIcons.envelope_open)
-          : const Icon(CupertinoIcons.envelope),
-      const Icon(CupertinoIcons.delete),
-      const Icon(CupertinoIcons.ellipsis_vertical),
+    final _mail = mailList[widget.id];
+    final List<Widget> actions = [
+      IconButton(
+        icon: const Icon(CupertinoIcons.arrowshape_turn_up_left_fill),
+        onPressed: () {},
+      ),
+      _isRead
+          ? IconButton(
+              icon: const Icon(CupertinoIcons.envelope_open),
+              onPressed: () {
+                setState(() {
+                  _isRead = !_isRead;
+                  mailList[widget.id].isRead = _isRead;
+                });
+                widget.voidCallback.call();
+              })
+          : IconButton(
+              icon: const Icon(CupertinoIcons.envelope),
+              onPressed: () {
+                setState(() {
+                  _isRead = !_isRead;
+                  mailList[widget.id].isRead = _isRead;
+                });
+                widget.voidCallback.call();
+              }),
+      IconButton(
+        icon: const Icon(CupertinoIcons.delete),
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) => Dialog(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('삭제하시겠어요?'),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                                onPressed: () => Navigator.popUntil(
+                                    context, (route) => route.isFirst),
+                                child: Text('네')),
+                            TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text('아니오'))
+                          ],
+                        )
+                      ],
+                    ),
+                  ));
+        },
+      ),
+      IconButton(
+        icon: const Icon(CupertinoIcons.ellipsis_vertical),
+        onPressed: () {},
+      ),
     ];
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('메일'),
-        actions: _actions, // TODO : _actions 아이콘마다 패딩 값 주기
+        actions: actions,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
@@ -45,7 +118,7 @@ class MailDetail extends StatelessWidget {
               value: _mail.from,
             ),
             const SizedBox(height: 10),
-            Text(DateFormat('yyyy년 MM월 dd일 HH:mm:ss').format(_mail.createdAt)),
+            Text(_mail.createdAt.formattedDateTime),
             const SizedBox(height: 50),
             Text(_mail.content),
           ],
