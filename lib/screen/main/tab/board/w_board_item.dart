@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:playground/screen/main/tab/board/vo/vo_board.dart';
 import 'package:playground/screen/main/tab/board/vo/vo_board_comment.dart';
+import 'package:playground/screen/main/tab/board/vo/vo_board_list.dart';
 import 'package:playground/screen/main/tab/board/w_board_detail.dart';
 
 class BoardItem extends StatefulWidget {
@@ -14,12 +15,24 @@ class BoardItem extends StatefulWidget {
 }
 
 class _BoardItemState extends State<BoardItem> {
+  late Board _board;
+
+  @override
+  void initState() {
+    _board = widget.board;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
       title: Row(
         children: [
-          Text(widget.board.title, style: const TextStyle(fontSize: 17)), // TODO : 읽은 글일 경우 읽은 글임을 나타내는 TextStyle로 스위칭
+          Text(widget.board.title,
+              style: (_board.isRead)
+                  ? const TextStyle(fontSize: 17, fontWeight: FontWeight.normal)
+                  : const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+          // TODO : 읽은 글일 경우 읽은 글임을 나타내는 TextStyle로 스위칭
           const SizedBox(width: 10),
           Text(
             widget.comments.length.toString(),
@@ -30,10 +43,19 @@ class _BoardItemState extends State<BoardItem> {
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => BoardDetail(board: widget.board, comments: widget.comments),
+          builder: (context) => BoardDetail(
+              board: widget.board,
+              comments: widget.comments,
+              callback: setRead),
         ),
       ),
     );
   }
-}
 
+  void setRead() {
+    if (boardList[_board.id].isRead != _board.isRead && _board.isRead) {
+      setState(() {
+      });
+    }
+  }
+}
