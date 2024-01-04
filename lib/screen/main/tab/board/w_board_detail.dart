@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:playground/screen/main/tab/board/vo/vo_board.dart';
 import 'package:playground/screen/main/tab/board/vo/vo_board_comment.dart';
 import 'package:after_layout/after_layout.dart';
@@ -15,8 +17,14 @@ class BoardDetail extends StatefulWidget {
   final Board board;
   final List<BoardComment> comments;
   final VoidCallback callback;
+  final QuillController controller;
 
-  const BoardDetail({required this.board, required this.comments, required this.callback, super.key});
+  const BoardDetail(
+      {required this.board,
+      required this.comments,
+      required this.callback,
+      required this.controller,
+      super.key});
 
   @override
   State<BoardDetail> createState() => _BoardDetailState();
@@ -25,10 +33,13 @@ class BoardDetail extends StatefulWidget {
 class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
   late Board _board;
   late List<BoardComment> _comments;
+  late QuillController _controller;
+
   @override
   void initState() {
     _board = widget.board;
     _comments = widget.comments;
+    _controller = widget.controller;
 
     super.initState();
   }
@@ -53,7 +64,17 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold)),
               RoundedContainer(
-                  height: 500, width: 500, child: Text(_board.content)),
+                  height: 500,
+                  width: 500,
+                  child: QuillEditor.basic(
+                    configurations: QuillEditorConfigurations(
+                        controller: _controller,
+                        readOnly: true,
+                        sharedConfigurations:
+                            const QuillSharedConfigurations(locale: Locale('ko'))),
+                  )),
+              // TODO : QuillController 를 넘겨주어 QuillEditor로 작성한 json 형식으로 인코딩된 글을 가져올 수 있었지만,
+              // QuillEditor로 작성하지 않은 글의 경우 가져올 때 오류가 발생하므로 분기 처리하여 보여주어야 함.
               Column(
                 children: _comments
                     .map((e) => Row(children: [
@@ -70,45 +91,3 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
     );
   }
 }
-
-
-// IconButton(
-// icon: const Icon(
-// CupertinoIcons.add_circled,
-// size: 50,
-// ),
-// onPressed: () {
-// // TODO : 클릭 시 기능 리스트 보여지도록 구현
-// print('dropdown item');
-// DropdownButton(
-// value: dropdownValue,
-// elevation: 1,
-// items: [
-// DropdownMenuItem(
-// value: list.first,
-// child: Container(
-// child: Text('1'),
-// )),
-// DropdownMenuItem(
-// value: list[1],
-// child: Container(
-// child: Text('2'),
-// )),
-// DropdownMenuItem(
-// value: list[2],
-// child: Container(
-// child: Text('2'),
-// )),
-// ],
-// onChanged: (value) {
-// if (value == null) {
-// return;
-// }
-//
-// setState(() {
-// dropdownValue = value;
-// });
-// },
-// );
-// },
-// ),
