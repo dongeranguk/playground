@@ -81,11 +81,4 @@ class _WriteBoardScreenState extends State<WriteBoardScreen> {
       ),
     );
   }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    _textEditingController.dispose();
-    super.dispose();
-  }
 }

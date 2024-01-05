@@ -18,7 +18,14 @@ class BoardFragment extends StatefulWidget {
 }
 
 class _BoardFragmentState extends State<BoardFragment> {
-  final QuillController _controller = QuillController.basic();
+
+  late QuillController _controller;
+
+  @override
+  void initState() {
+    _controller = QuillController.basic();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,25 +41,29 @@ class _BoardFragmentState extends State<BoardFragment> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.add),
+            child: const Icon(Icons.add),
             onPressed: () {
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
                           WriteBoardScreen(controller:_controller, callback: addBoard)));
+              // TODO : 새로운 글을 작성할 때, controller 가 dispose 되지 않아 이전에 작성한 글이 그대로 조회된다. 이전에 작성한 글이 그대로 조회되지 않도록 수정 필요
             }));
   }
 
   void addBoard(Board board) {
     boardList.add(board);
-    for(var i=0; i<boardList.length; i++) {
-      print(boardList[i].content);
-    }
     setState(() {});
   }
 
   List<BoardComment> getCommentsByBoardId(int id) {
     return boardCommentList.where((element) => element.boardId == id).toList();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }
