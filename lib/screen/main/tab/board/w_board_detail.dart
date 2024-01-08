@@ -34,6 +34,8 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
   late Board _board;
   late List<BoardComment> _comments;
   late QuillController _controller;
+  final ScrollController _scrollController = ScrollController();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -63,16 +65,26 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
               Text(_board.title,
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold)),
-              RoundedContainer(
-                  height: 500,
-                  width: 500,
-                  child: QuillEditor.basic(
-                    configurations: QuillEditorConfigurations(
-                        controller: _controller,
-                        readOnly: true,
-                        sharedConfigurations:
-                            const QuillSharedConfigurations(locale: Locale('ko'))),
-                  )),
+              _controller.document.toDelta().isNotEmpty
+                  ? RoundedContainer(
+                      height: 500,
+                      width: 500,
+                      child: QuillEditor(
+                          scrollController: _scrollController,
+                          focusNode: _focusNode,
+                          configurations: QuillEditorConfigurations(
+                              controller: _controller,
+                              readOnly: true,
+                              autoFocus: false,
+                              expands: true,
+                              scrollable: true,
+                              showCursor: false)),
+                    )
+                  : RoundedContainer(
+                      height: 500,
+                      width: 500,
+                      child: Text(_board.content.toString()),
+                    ),
               // TODO : QuillController 를 넘겨주어 QuillEditor로 작성한 json 형식으로 인코딩된 글을 가져올 수 있었지만,
               // QuillEditor로 작성하지 않은 글의 경우 가져올 때 오류가 발생하므로 분기 처리하여 보여주어야 함.
               Column(

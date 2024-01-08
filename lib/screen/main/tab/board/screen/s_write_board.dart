@@ -10,7 +10,8 @@ class WriteBoardScreen extends StatefulWidget {
   final QuillController controller;
   final Function(Board) callback;
 
-  const WriteBoardScreen({required this.controller, required this.callback, super.key});
+  const WriteBoardScreen(
+      {required this.controller, required this.callback, super.key});
 
   @override
   State<WriteBoardScreen> createState() => _WriteBoardScreenState();
@@ -80,5 +81,11 @@ class _WriteBoardScreenState extends State<WriteBoardScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
   }
 }
