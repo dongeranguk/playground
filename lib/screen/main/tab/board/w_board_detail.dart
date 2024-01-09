@@ -17,13 +17,11 @@ class BoardDetail extends StatefulWidget {
   final Board board;
   final List<BoardComment> comments;
   final VoidCallback callback;
-  final QuillController controller;
 
   const BoardDetail(
       {required this.board,
       required this.comments,
       required this.callback,
-      required this.controller,
       super.key});
 
   @override
@@ -33,7 +31,7 @@ class BoardDetail extends StatefulWidget {
 class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
   late Board _board;
   late List<BoardComment> _comments;
-  late QuillController _controller;
+  final QuillController _controller = QuillController.basic();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
 
@@ -41,7 +39,6 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
   void initState() {
     _board = widget.board;
     _comments = widget.comments;
-    _controller = widget.controller;
 
     super.initState();
   }
@@ -49,6 +46,9 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
   @override
   FutureOr<void> afterFirstLayout(BuildContext context) {
     _board.isRead = !_board.isRead;
+    List<dynamic> jsonData = jsonDecode(_board.content);
+    _controller.document = Document.fromJson(jsonData);
+
     widget.callback.call();
   }
 
@@ -65,7 +65,7 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
               Text(_board.title,
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold)),
-              _controller.document.toDelta().isNotEmpty
+              !_controller.document.isEmpty()
                   ? RoundedContainer(
                       height: 500,
                       width: 500,

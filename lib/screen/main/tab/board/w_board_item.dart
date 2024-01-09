@@ -6,23 +6,20 @@ import 'package:playground/screen/main/tab/board/vo/vo_board_list.dart';
 import 'package:playground/screen/main/tab/board/w_board_detail.dart';
 
 class BoardItem extends StatefulWidget {
-  final QuillController controller;
   final Board board;
   final List<BoardComment> comments;
 
-  const BoardItem(this.board, this.comments, {required this.controller, super.key});
+  const BoardItem(this.board, this.comments, {super.key});
 
   @override
   State<BoardItem> createState() => _BoardItemState();
 }
 
 class _BoardItemState extends State<BoardItem> {
-  late QuillController _controller;
   late Board _board;
 
   @override
   void initState() {
-    _controller = widget.controller;
     _board = widget.board;
     super.initState();
   }
@@ -51,7 +48,6 @@ class _BoardItemState extends State<BoardItem> {
               board: widget.board,
               comments: widget.comments,
               callback: setRead,
-              controller: _controller,
           ),
         ),
       ),

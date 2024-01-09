@@ -7,24 +7,24 @@ import 'package:playground/screen/main/tab/board/vo/vo_board_list.dart';
 import '../vo/vo_board.dart';
 
 class WriteBoardScreen extends StatefulWidget {
-  final QuillController controller;
+  //final QuillController controller;
   final Function(Board) callback;
 
   const WriteBoardScreen(
-      {required this.controller, required this.callback, super.key});
+      {required this.callback, super.key});
 
   @override
   State<WriteBoardScreen> createState() => _WriteBoardScreenState();
 }
 
 class _WriteBoardScreenState extends State<WriteBoardScreen> {
-  late QuillController _controller;
+  final QuillController _controller = QuillController.basic();
   final TextEditingController _textEditingController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
-    _controller = widget.controller;
+    // _controller = widget.controller;
     super.initState();
   }
 
@@ -74,6 +74,9 @@ class _WriteBoardScreenState extends State<WriteBoardScreen> {
                   widget.callback.call(Board(_textEditingController.text,
                       jsonEncode(_controller.document.toDelta().toJson()),
                       id: 10, createdBy: '김동욱'));
+
+                  print('board content : ${boardList[boardList.length-1].content}');
+                  print(jsonEncode(boardList[boardList.length-1].content));
                   Navigator.pop(context);
                 }
               },
@@ -86,6 +89,7 @@ class _WriteBoardScreenState extends State<WriteBoardScreen> {
   @override
   void dispose() {
     _textEditingController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 }
