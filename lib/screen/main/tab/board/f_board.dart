@@ -48,7 +48,6 @@ class _BoardFragmentState extends State<BoardFragment> {
                   MaterialPageRoute(
                       builder: (context) =>
                           WriteBoardScreen(callback: addBoard)));
-              // TODO : 새로운 글을 작성할 때, controller 가 dispose 되지 않아 이전에 작성한 글이 그대로 조회된다. 이전에 작성한 글이 그대로 조회되지 않도록 수정 필요
             }));
   }
 

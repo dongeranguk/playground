@@ -7,7 +7,6 @@ import 'package:playground/screen/main/tab/board/vo/vo_board_list.dart';
 import '../vo/vo_board.dart';
 
 class WriteBoardScreen extends StatefulWidget {
-  //final QuillController controller;
   final Function(Board) callback;
 
   const WriteBoardScreen(
@@ -24,7 +23,6 @@ class _WriteBoardScreenState extends State<WriteBoardScreen> {
 
   @override
   void initState() {
-    // _controller = widget.controller;
     super.initState();
   }
 
@@ -75,8 +73,7 @@ class _WriteBoardScreenState extends State<WriteBoardScreen> {
                       jsonEncode(_controller.document.toDelta().toJson()),
                       id: 10, createdBy: '김동욱'));
 
-                  print('board content : ${boardList[boardList.length-1].content}');
-                  print(jsonEncode(boardList[boardList.length-1].content));
+                  print(boardList[boardList.length-1].content);
                   Navigator.pop(context);
                 }
               },
