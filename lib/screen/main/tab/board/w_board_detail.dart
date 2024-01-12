@@ -5,8 +5,12 @@ import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:playground/common/common.dart';
+import 'package:playground/common/dart/extension/date_extension.dart';
+import 'package:playground/screen/main/tab/board/s_modify_board.dart';
 import 'package:playground/screen/main/tab/board/vo/vo_board.dart';
 import 'package:playground/screen/main/tab/board/vo/vo_board_comment.dart';
+import 'package:playground/screen/main/tab/board/vo/vo_board_list.dart';
+import 'package:playground/screen/main/tab/mail/s_mail_detail.dart';
 
 const List<String> list = ['첫번째', '두번째', '세번째'];
 
@@ -31,6 +35,7 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
   final QuillController _controller = QuillController.basic();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
+  late QuillEditorConfigurations _configurations;
 
   @override
   void initState() {
@@ -38,6 +43,14 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
     _comments = widget.comments;
 
     _controller.document = Document.fromJson(jsonDecode(_board.content));
+    _configurations = QuillEditorConfigurations(
+      controller: _controller,
+      readOnly: true,
+      autoFocus: false,
+      expands: true,
+      scrollable: true,
+      showCursor: false,
+    );
 
     super.initState();
   }
@@ -62,6 +75,33 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
               Text(_board.title,
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 15),
+              Row(
+                children: [
+                  Column(
+                    children: [
+                      Text(_board.createdAt.formattedDateTime),
+                      _board.updatedAt != null
+                          ? Text(_board.updatedAt!.formattedDateTime)
+                          : const Text(''),
+                    ],
+                  ),
+                  const Spacer(),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return ModifyBoardScreen(
+                              board: _board,
+                              controller: _controller,
+                              callback:
+                                  modifyBoard); // TODO : 글 작성 화면과 비슷하므로 글 작성 위젯을 재활용할 수 있도록 해보자.
+                        }));
+                      },
+                      child: Text('수정')),
+                  TextButton(onPressed: () {}, child: Text('삭제')),
+                ],
+              ),
               !_controller.document.isEmpty()
                   ? RoundedContainer(
                       height: 500,
@@ -69,13 +109,7 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
                       child: QuillEditor(
                           scrollController: _scrollController,
                           focusNode: _focusNode,
-                          configurations: QuillEditorConfigurations(
-                              controller: _controller,
-                              readOnly: true,
-                              autoFocus: false,
-                              expands: true,
-                              scrollable: true,
-                              showCursor: false)),
+                          configurations: _configurations),
                     )
                   : RoundedContainer(
                       height: 500,
@@ -86,7 +120,6 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
                 children: _comments
                     .map((e) => Row(children: [
                           Text(e.commentId.toString()),
-                          const SizedBox(width: 10),
                           Text(e.content),
                         ]))
                     .toList(),
@@ -96,5 +129,12 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
         ),
       ),
     );
+  }
+
+  void modifyBoard(int boardId, String content) {
+    setState(() {
+      boardList[boardId].content = content;
+      boardList[boardId].updatedAt = DateTime.now();
+    });
   }
 }
