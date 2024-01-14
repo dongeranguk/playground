@@ -32,5 +32,11 @@ class Board {
     }
   }
 
+
+  @override
+  String toString() {
+    return 'Board{id: $id, title: $title, content: $content, likeCount: $likeCount, isRead: $isRead, isDeleted: $isDeleted, createdBy: $createdBy, createdAt: $createdAt, updatedAt: $updatedAt, comments: $comments}';
+  }
+
   List<BoardComment>? get boardComments => comments;
 }

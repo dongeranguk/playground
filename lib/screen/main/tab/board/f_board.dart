@@ -18,7 +18,6 @@ class BoardFragment extends StatefulWidget {
 }
 
 class _BoardFragmentState extends State<BoardFragment> {
-
   late QuillController _controller;
 
   @override
@@ -35,7 +34,7 @@ class _BoardFragmentState extends State<BoardFragment> {
             SliverList(
                 delegate: SliverChildListDelegate(
               boardList.reversed
-                  .map((e) => BoardItem(e, getCommentsByBoardId(e.id)))
+                  .map((e) => BoardItem(e, getCommentsByBoardId(e.id), callback: removeBoard))
                   .toList(),
             ))
           ],
@@ -54,6 +53,12 @@ class _BoardFragmentState extends State<BoardFragment> {
   void addBoard(Board board) {
     boardList.add(board);
     setState(() {});
+  }
+
+  void removeBoard(int targetId) {
+    setState(() {
+      boardList.removeWhere((element) => element.id == targetId);
+    });
   }
 
   List<BoardComment> getCommentsByBoardId(int id) {

@@ -68,12 +68,10 @@ class _WriteBoardScreenState extends State<WriteBoardScreen> {
           TextButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  print(_controller.document.toPlainText());
                   widget.callback.call(Board(_textEditingController.text,
                       jsonEncode(_controller.document.toDelta().toJson()),
-                      id: 10, createdBy: '김동욱'));
+                      id: boardList.last.id + 1, createdBy: '김동욱')); // TODO : id 를 부여하기 까다로워서 임의 값 10을 넣었지만, 추후에 유일성이 보장된 id 를 넣어주자.
 
-                  print(boardList[boardList.length-1].content);
                   Navigator.pop(context);
                 }
               },

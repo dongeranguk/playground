@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:playground/common/common.dart';
 import 'package:playground/common/dart/extension/date_extension.dart';
+import 'package:playground/screen/main/tab/board/f_board.dart';
 import 'package:playground/screen/main/tab/board/s_modify_board.dart';
 import 'package:playground/screen/main/tab/board/vo/vo_board.dart';
 import 'package:playground/screen/main/tab/board/vo/vo_board_comment.dart';
@@ -18,11 +19,13 @@ class BoardDetail extends StatefulWidget {
   final Board board;
   final List<BoardComment> comments;
   final VoidCallback callback;
+  final Function(int) callback2;
 
   const BoardDetail(
       {required this.board,
       required this.comments,
       required this.callback,
+      required this.callback2,
       super.key});
 
   @override
@@ -98,8 +101,13 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
                                   modifyBoard); // TODO : 글 작성 화면과 비슷하므로 글 작성 위젯을 재활용할 수 있도록 해보자.
                         }));
                       },
-                      child: Text('수정')),
-                  TextButton(onPressed: () {}, child: Text('삭제')),
+                      child: const Text('수정')),
+                  TextButton(
+                      onPressed: () {
+                        widget.callback2.call(_board.id);
+                        Navigator.pop(context);
+                      },
+                      child: const Text('삭제')),
                 ],
               ),
               !_controller.document.isEmpty()
@@ -131,10 +139,10 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
     );
   }
 
-  void modifyBoard(int boardId, String content) {
+  void modifyBoard(String content) {
     setState(() {
-      boardList[boardId].content = content;
-      boardList[boardId].updatedAt = DateTime.now();
+      _board.content = content;
+      _board.updatedAt = DateTime.now();
     });
   }
 }

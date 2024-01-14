@@ -8,8 +8,9 @@ import 'package:playground/screen/main/tab/board/w_board_detail.dart';
 class BoardItem extends StatefulWidget {
   final Board board;
   final List<BoardComment> comments;
+  final Function(int) callback;
 
-  const BoardItem(this.board, this.comments, {super.key});
+  const BoardItem(this.board, this.comments, {super.key, required this.callback});
 
   @override
   State<BoardItem> createState() => _BoardItemState();
@@ -48,7 +49,7 @@ class _BoardItemState extends State<BoardItem> {
               board: widget.board,
               comments: widget.comments,
               callback: setRead,
-          ),
+              callback2: widget.callback),
         ),
       ),
     );

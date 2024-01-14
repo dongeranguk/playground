@@ -9,7 +9,7 @@ import 'package:playground/screen/main/tab/board/w_board_detail.dart';
 class ModifyBoardScreen extends StatefulWidget {
   final Board board;
   final QuillController controller;
-  final Function(int, String) callback;
+  final Function(String) callback;
 
   const ModifyBoardScreen(
       {required this.board,
@@ -75,7 +75,7 @@ class _ModifyBoardScreenState extends State<ModifyBoardScreen> {
           ),
           TextButton(
               onPressed: () {
-                widget.callback.call(_board.id, jsonEncode(_controller.document.toDelta().toJson()));
+                widget.callback.call(jsonEncode(_controller.document.toDelta().toJson()));
                 Navigator.pop(context);
               },
               child: const Text('저장')),
