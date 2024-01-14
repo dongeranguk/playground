@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
+import 'package:playground/screen/main/tab/board/screen/s_write_board.dart';
+import 'package:playground/screen/main/tab/board/vo/vo_board_comment_list.dart';
+import 'package:playground/screen/main/tab/board/vo/vo_board_list.dart';
+import 'package:playground/screen/main/tab/board/w_board_item.dart';
+import 'package:playground/screen/main/tab/board/vo/vo_board_comment.dart';
+
+import 'vo/vo_board.dart';
 
 class BoardFragment extends StatefulWidget {
   final String tabName;
@@ -10,21 +18,56 @@ class BoardFragment extends StatefulWidget {
 }
 
 class _BoardFragmentState extends State<BoardFragment> {
-  late String _tabName;
+  late QuillController _controller;
 
   @override
   void initState() {
-    _tabName = widget.tabName;
+    _controller = QuillController.basic();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        _tabName,
-        style: const TextStyle(fontSize: 50),
-      ),
-    );
+    return Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            SliverList(
+                delegate: SliverChildListDelegate(
+              boardList.reversed
+                  .map((e) => BoardItem(e, getCommentsByBoardId(e.id), callback: removeBoard))
+                  .toList(),
+            ))
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+            child: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          WriteBoardScreen(callback: addBoard)));
+            }));
+  }
+
+  void addBoard(Board board) {
+    boardList.add(board);
+    setState(() {});
+  }
+
+  void removeBoard(int targetId) {
+    setState(() {
+      boardList.removeWhere((element) => element.id == targetId);
+    });
+  }
+
+  List<BoardComment> getCommentsByBoardId(int id) {
+    return boardCommentList.where((element) => element.boardId == id).toList();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }
