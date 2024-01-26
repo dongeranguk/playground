@@ -43,9 +43,10 @@ class _CalendarFragmentState extends State<CalendarFragment> {
                 width: 200,
                 child: TextField(
                   controller: _controller,
-                  decoration: const InputDecoration(suffixIcon: Icon(Icons.search)),
+                  decoration:
+                      const InputDecoration(suffixIcon: Icon(Icons.search)),
                   onChanged: (value) => setState(() {
-                    keyword = value;
+                    if (value != null) keyword = value;
                   }),
                   textInputAction: TextInputAction.go,
                 ),
@@ -60,10 +61,11 @@ class _CalendarFragmentState extends State<CalendarFragment> {
               Column(
                   children: _type == CalendarType.every
                       ? scheduleList
+                          .where((e) => e.name.contains(keyword))
                           .map((e) => ScheduleList(userSchedule: e))
                           .toList()
                       : scheduleList
-                          .where((e) => e.name == keyword)
+                          .where((e) => e.name.contains(keyword))
                           .map((e) => ScheduleList(userSchedule: e))
                           .toList()),
             ],
