@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:playground/screen/main/tab/calendar/w_user_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:playground/screen/main/tab/calendar/vo/vo_schedule_list.dart';
 import 'package:playground/screen/main/tab/calendar/w_schedule_list.dart';
@@ -38,9 +39,8 @@ class _CalendarFragmentState extends State<CalendarFragment> {
                 type: _type,
                 callback: selectType,
               ),
-              const Spacer(),
-              SizedBox(
-                width: 200,
+              TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UserCalendar())), child: const Text('개인')),
+              Expanded(
                 child: TextField(
                   controller: _controller,
                   decoration:
