@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:playground/screen/main/tab/calendar/vo/calendar_type.dart';
 
-import 'f_calendar.dart';
-
 class CalendarTypeMenu extends StatefulWidget {
   final CalendarType type;
   final Function(CalendarType) callback;

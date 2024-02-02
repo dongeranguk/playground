@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:playground/screen/main/tab/calendar/vo/vo_schedule_list.dart';
+import 'package:playground/screen/main/tab/calendar/vo/vo_user_schedule.dart';
 import 'package:playground/screen/main/tab/calendar/w_personal_calendar.dart';
 import 'package:playground/screen/main/tab/calendar/w_public_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:playground/screen/main/tab/calendar/vo/vo_schedule_list.dart';
-import 'package:playground/screen/main/tab/calendar/w_schedule_list.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 import 'vo/calendar_type.dart';
 import 'w_calendar_type_menu.dart';
@@ -88,6 +87,13 @@ class _CalendarFragmentState extends State<CalendarFragment> {
                                 ))
                             .toList())
                     : PersonalCalendar(
+                        userSchedule: UserSchedule(
+                          null,
+                          name: '테스트',
+                          from: DateTime(2024, 2, 2),
+                          to: DateTime(2024, 2, 7),
+                          title: '할일',
+                        ),
                         focusedDay: _focusedDay,
                         firstDay: _firstDay,
                         lastDay: _lastDay,

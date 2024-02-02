@@ -3,7 +3,7 @@ class UserSchedule {
   final DateTime from;
   final DateTime to;
   final String title;
-  final String memo;
+  String? memo;
 
   UserSchedule(
     this.memo, {
