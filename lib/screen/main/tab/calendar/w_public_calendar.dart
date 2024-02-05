@@ -5,14 +5,12 @@ import 'package:table_calendar/table_calendar.dart';
 class PublicCalendar extends StatefulWidget {
   final UserSchedule userSchedule;
   final DateTime currentDay;
-  final DateTime focusedDay;
   final DateTime firstDay;
   final DateTime lastDay;
 
   const PublicCalendar({
     required this.userSchedule,
     required this.currentDay,
-    required this.focusedDay,
     required this.firstDay,
     required this.lastDay,
     super.key,
@@ -34,7 +32,7 @@ class _PublicCalendarState extends State<PublicCalendar> {
     _userSchedule = widget.userSchedule;
 
     _currentDay = widget.currentDay;
-    _focusedDay = widget.focusedDay;
+    _focusedDay = _currentDay;
     _firstDay = widget.firstDay;
     _lastDay = widget.lastDay;
     super.initState();

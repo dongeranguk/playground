@@ -25,14 +25,13 @@ class _CalendarFragmentState extends State<CalendarFragment> {
 
   final DateTime _currentDay = DateTime.now();
   late DateTime _focusedDay;
+  late DateTime _selectedDay;
   late DateTime _firstDay;
   late DateTime _lastDay;
 
   @override
   void initState() {
     _type = CalendarType.every;
-
-    _focusedDay = _currentDay;
     _firstDay = _currentDay
         .subtract(Duration(days: ((_currentDay.year * 5) / 365).round()));
     _lastDay =
@@ -81,28 +80,23 @@ class _CalendarFragmentState extends State<CalendarFragment> {
                             .map((e) => PublicCalendar(
                                   userSchedule: e,
                                   currentDay: _currentDay,
-                                  focusedDay: _focusedDay,
                                   firstDay: _firstDay,
                                   lastDay: _lastDay,
                                 ))
                             .toList())
                     : PersonalCalendar(
-                        userSchedule: UserSchedule(
-                          null,
-                          name: '테스트',
-                          from: DateTime(2024, 2, 2),
-                          to: DateTime(2024, 2, 7),
-                          title: '할일',
-                        ),
-                        focusedDay: _focusedDay,
+                        userSchedule: scheduleList
+                            .where((element) => element.name == '김동욱')
+                            .toList(),
+                        currentDay: _currentDay,
                         firstDay: _firstDay,
                         lastDay: _lastDay,
-                      )
+                        callback: selectedDay)
               ],
             ),
           ),
         ),
-        floatingActionButton: CalendarFAB());
+        floatingActionButton: CalendarFAB(from: _selectedDay));
   }
 
   void selectType(CalendarType type) {
@@ -119,10 +113,18 @@ class _CalendarFragmentState extends State<CalendarFragment> {
       }
     });
   }
+
+  void selectedDay(DateTime selectedDay) {
+    _selectedDay = selectedDay;
+  }
 }
 
 class CalendarFAB extends StatefulWidget {
-  const CalendarFAB({
+  final DateTime from;
+  DateTime? to;
+
+  CalendarFAB({
+    required this.from,
     super.key,
   });
 
@@ -131,6 +133,14 @@ class CalendarFAB extends StatefulWidget {
 }
 
 class _CalendarFABState extends State<CalendarFAB> {
+  late DateTime _from;
+
+  @override
+  void initState() {
+    _from = widget.from;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
@@ -160,7 +170,8 @@ class _CalendarFABState extends State<CalendarFAB> {
                               fontSize: 17, fontWeight: FontWeight.w600),
                         ),
                         onPressed: () {},
-                      )
+                      ),
+                      Text('선택한 날짜 : ${_from}'),
                     ])
               ],
             ),

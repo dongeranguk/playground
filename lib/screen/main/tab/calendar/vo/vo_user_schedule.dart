@@ -12,4 +12,9 @@ class UserSchedule {
     required this.to,
     required this.title,
   });
+
+  @override
+  String toString() {
+    return 'UserSchedule{name: $name, from: $from, to: $to, title: $title, memo: $memo}';
+  }
 }
