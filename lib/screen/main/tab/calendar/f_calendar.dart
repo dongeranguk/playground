@@ -32,6 +32,7 @@ class _CalendarFragmentState extends State<CalendarFragment> {
   @override
   void initState() {
     _type = CalendarType.every;
+    _selectedDay = _currentDay;
     _firstDay = _currentDay
         .subtract(Duration(days: ((_currentDay.year * 5) / 365).round()));
     _lastDay =
@@ -91,7 +92,7 @@ class _CalendarFragmentState extends State<CalendarFragment> {
                         currentDay: _currentDay,
                         firstDay: _firstDay,
                         lastDay: _lastDay,
-                        callback: selectedDay)
+                        callback: selectedDay),
               ],
             ),
           ),
@@ -115,29 +116,32 @@ class _CalendarFragmentState extends State<CalendarFragment> {
   }
 
   void selectedDay(DateTime selectedDay) {
-    _selectedDay = selectedDay;
+    setState(() {
+      // setstate 호출해서 화면 다시 호출될텐데 CalendarFAB 에는 왜 전달이 안 되는지?
+      _selectedDay = selectedDay;
+    });
+    print(_selectedDay);
   }
 }
 
 class CalendarFAB extends StatefulWidget {
-  final DateTime from;
-  DateTime? to;
 
-  CalendarFAB({
-    required this.from,
+  // DateTime? to;
+  const CalendarFAB({
+    required DateTime from,
     super.key,
-  });
+  }) : _from = from;
+
+  final DateTime _from;
 
   @override
   State<CalendarFAB> createState() => _CalendarFABState();
 }
 
 class _CalendarFABState extends State<CalendarFAB> {
-  late DateTime _from;
 
   @override
   void initState() {
-    _from = widget.from;
     super.initState();
   }
 
@@ -171,8 +175,8 @@ class _CalendarFABState extends State<CalendarFAB> {
                         ),
                         onPressed: () {},
                       ),
-                      Text('선택한 날짜 : ${_from}'),
-                    ])
+                    ]),
+                Text('선택한 날짜 : ${widget._from}'),
               ],
             ),
           ),

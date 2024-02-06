@@ -53,8 +53,8 @@ class _PersonalCalendarState extends State<PersonalCalendar> {
           setState(() {
             _selectedDay = selectedDay;
             _focusedDay = focusedDay;
-            widget.callback.call(_focusedDay);
           });
+            widget.callback.call(_selectedDay!);
         }
       },
     );
