@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 
 extension DateExtension on DateTime {
   String get formattedDateTime => DateFormat('yyyy년 MM월 dd일 HH:mm:dd').format(this);
+  String get formattedYMDhM => DateFormat('yyyy년 MM월 dd일 HH:mm').format(this);
 
   String customFormat() {
     DateTime now = DateTime.now();

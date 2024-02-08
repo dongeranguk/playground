@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:playground/common/dart/extension/date_extension.dart';
 import 'package:playground/screen/main/tab/calendar/vo/vo_schedule_list.dart';
 import 'package:playground/screen/main/tab/calendar/vo/vo_user_schedule.dart';
 import 'package:playground/screen/main/tab/calendar/w_personal_calendar.dart';
@@ -97,7 +98,7 @@ class _CalendarFragmentState extends State<CalendarFragment> {
             ),
           ),
         ),
-        floatingActionButton: CalendarFAB(from: _selectedDay));
+        floatingActionButton: CalendarFAB(now: DateTime.now(), from: _selectedDay));
   }
 
   void selectType(CalendarType type) {
@@ -127,12 +128,15 @@ class _CalendarFragmentState extends State<CalendarFragment> {
 class CalendarFAB extends StatefulWidget {
 
   // DateTime? to;
-  const CalendarFAB({
+  CalendarFAB({
+    required DateTime now,
     required DateTime from,
     super.key,
-  }) : _from = from;
+  }) : _now = now, _from = DateTime(from.year, from.month, from.day, now.hour), _to = from.add(Duration(days: 1, hours: now.hour + 1));
 
+  final DateTime _now;
   final DateTime _from;
+  final DateTime _to;
 
   @override
   State<CalendarFAB> createState() => _CalendarFABState();
@@ -176,7 +180,8 @@ class _CalendarFABState extends State<CalendarFAB> {
                         onPressed: () {},
                       ),
                     ]),
-                Text('선택한 날짜 : ${widget._from}'),
+                Text(widget._from.formattedYMDhM),
+                Text(widget._to.formattedYMDhM),
               ],
             ),
           ),
