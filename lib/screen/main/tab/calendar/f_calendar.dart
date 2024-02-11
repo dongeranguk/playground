@@ -9,6 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'vo/calendar_type.dart';
 import 'w_calendar_type_menu.dart';
 
+final DateTime now = DateTime.now();
+final DateTime firstDay = now.subtract(Duration(days: (5 * 365).round()));
+final DateTime lastDay = now.add(Duration(days: (5 * 365).round()));
+
 class CalendarFragment extends StatefulWidget {
   final String tabName;
 
@@ -27,17 +31,11 @@ class _CalendarFragmentState extends State<CalendarFragment> {
   final DateTime _currentDay = DateTime.now();
   late DateTime _focusedDay;
   late DateTime _selectedDay;
-  late DateTime _firstDay;
-  late DateTime _lastDay;
 
   @override
   void initState() {
     _type = CalendarType.every;
     _selectedDay = _currentDay;
-    _firstDay = _currentDay
-        .subtract(Duration(days: ((_currentDay.year * 5) / 365).round()));
-    _lastDay =
-        _currentDay.add(Duration(days: ((_currentDay.year * 5) / 365).round()));
     super.initState();
   }
 
@@ -82,8 +80,8 @@ class _CalendarFragmentState extends State<CalendarFragment> {
                             .map((e) => PublicCalendar(
                                   userSchedule: e,
                                   currentDay: _currentDay,
-                                  firstDay: _firstDay,
-                                  lastDay: _lastDay,
+                                  firstDay: firstDay,
+                                  lastDay: lastDay,
                                 ))
                             .toList())
                     : PersonalCalendar(
@@ -91,14 +89,15 @@ class _CalendarFragmentState extends State<CalendarFragment> {
                             .where((element) => element.name == '김동욱')
                             .toList(),
                         currentDay: _currentDay,
-                        firstDay: _firstDay,
-                        lastDay: _lastDay,
+                        firstDay: firstDay,
+                        lastDay: lastDay,
                         callback: selectedDay),
               ],
             ),
           ),
         ),
-        floatingActionButton: CalendarFAB(now: DateTime.now(), from: _selectedDay));
+        floatingActionButton:
+            CalendarFAB(now: DateTime.now(), from: _selectedDay));
   }
 
   void selectType(CalendarType type) {
@@ -118,21 +117,27 @@ class _CalendarFragmentState extends State<CalendarFragment> {
 
   void selectedDay(DateTime selectedDay) {
     setState(() {
-      // setstate 호출해서 화면 다시 호출될텐데 CalendarFAB 에는 왜 전달이 안 되는지?
       _selectedDay = selectedDay;
     });
-    print(_selectedDay);
   }
+
+  void selectedRange(DateTime from, DateTime to) {
+    setState(() {
+
+    });
+  }
+
 }
 
 class CalendarFAB extends StatefulWidget {
 
-  // DateTime? to;
   CalendarFAB({
     required DateTime now,
     required DateTime from,
     super.key,
-  }) : _now = now, _from = DateTime(from.year, from.month, from.day, now.hour), _to = from.add(Duration(days: 1, hours: now.hour + 1));
+  })  : _now = now,
+        _from = DateTime(from.year, from.month, from.day, now.hour),
+        _to = from.add(Duration(days: 1, hours: now.hour + 1));
 
   final DateTime _now;
   final DateTime _from;
@@ -143,6 +148,7 @@ class CalendarFAB extends StatefulWidget {
 }
 
 class _CalendarFABState extends State<CalendarFAB> {
+  final TextEditingController _textEditingController = TextEditingController();
 
   @override
   void initState() {
@@ -180,8 +186,74 @@ class _CalendarFABState extends State<CalendarFAB> {
                         onPressed: () {},
                       ),
                     ]),
-                Text(widget._from.formattedYMDhM),
-                Text(widget._to.formattedYMDhM),
+                SizedBox(height: 15),
+                Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 10),
+                          child: TextField(
+                            decoration: const InputDecoration(
+                                hintText: '제목', border: InputBorder.none),
+                            style: TextStyle(fontSize: 15),
+                            controller: _textEditingController,
+                          ),
+                        ),
+                      ],
+                    )),
+                const SizedBox(height: 30),
+                Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                            child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 10),
+                                child: GestureDetector(
+                                  child: Text(widget._from.formattedYMDhM),
+                                  onTap: () {
+                                    showDatePicker(
+                                        context: context,
+                                        initialDate: widget._from,
+                                        firstDate: firstDay,
+                                        lastDate: lastDay);
+                                    // TODO : flutter 에서 제공하는 DatePicker 로는 구현할 수 없었던 캘린더 화면과
+                                    // TODO : 날짜를 범위로 선택할 수 없어 TableCalendar 패키지를 사용하였는데, 여기서 또 DatePicker를 사용하는게 맞을까?
+                                    // TODO : 차라리 TableCalendar에서
+                                  },
+                                ))),
+                        Line(),
+                        Expanded(
+                            child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 10),
+                                child: GestureDetector(
+                                  child: Text(widget._to.formattedYMDhM),
+                                  onTap: () {
+                                    showDatePicker(
+                                        context: context,
+                                        initialDate: widget._to,
+                                        firstDate: firstDay,
+                                        lastDate: lastDay);
+                                  },
+                                ))),
+                      ],
+                    )),
               ],
             ),
           ),
@@ -189,6 +261,27 @@ class _CalendarFABState extends State<CalendarFAB> {
         );
       },
       child: const Icon(Icons.add),
+    );
+  }
+}
+
+class Line extends StatelessWidget {
+  Line({
+    super.key,
+  })  : _height = 1,
+        _width = double.infinity;
+
+  final double? _height;
+  final double? _width;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: _width,
+      height: _height,
+      child: Container(
+        color: Colors.grey.shade400,
+      ),
     );
   }
 }
