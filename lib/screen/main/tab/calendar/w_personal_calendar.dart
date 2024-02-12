@@ -28,9 +28,6 @@ class _PersonalCalendarState extends State<PersonalCalendar> {
   late DateTime _firstDay;
   late DateTime _lastDay;
   DateTime? _selectedDay;
-  RangeSelectionMode _rangeSelectionMode = RangeSelectionMode.toggledOn;
-  DateTime? _rangeStart;
-  DateTime? _rangeEnd;
 
   @override
   void initState() {
@@ -48,9 +45,6 @@ class _PersonalCalendarState extends State<PersonalCalendar> {
       firstDay: _firstDay,
       lastDay: _lastDay,
       locale: 'ko',
-      rangeStartDay: _rangeStart,
-      rangeEndDay: _rangeEnd,
-      rangeSelectionMode: _rangeSelectionMode,
       selectedDayPredicate: (day) {
         return isSameDay(_selectedDay, day);
       },
@@ -59,20 +53,9 @@ class _PersonalCalendarState extends State<PersonalCalendar> {
           setState(() {
             _selectedDay = selectedDay;
             _focusedDay = focusedDay;
-            _rangeStart = null;
-            _rangeEnd = null;
-            _rangeSelectionMode = RangeSelectionMode.toggledOff;
           });
           widget.callback.call(_selectedDay!);
         }
-      },
-      onRangeSelected: (start, end, focusedDay) {
-        setState(() {
-          _selectedDay = null;
-          _rangeStart = start;
-          _rangeEnd = end;
-          _rangeSelectionMode = RangeSelectionMode.toggledOn;
-        });
       },
     );
   }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:playground/common/dart/extension/date_extension.dart';
 import 'package:playground/screen/main/tab/calendar/vo/vo_schedule_list.dart';
-import 'package:playground/screen/main/tab/calendar/vo/vo_user_schedule.dart';
 import 'package:playground/screen/main/tab/calendar/w_personal_calendar.dart';
 import 'package:playground/screen/main/tab/calendar/w_public_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -122,15 +121,11 @@ class _CalendarFragmentState extends State<CalendarFragment> {
   }
 
   void selectedRange(DateTime from, DateTime to) {
-    setState(() {
-
-    });
+    setState(() {});
   }
-
 }
 
 class CalendarFAB extends StatefulWidget {
-
   CalendarFAB({
     required DateTime now,
     required DateTime from,
@@ -140,7 +135,7 @@ class CalendarFAB extends StatefulWidget {
         _to = from.add(Duration(days: 1, hours: now.hour + 1));
 
   final DateTime _now;
-  final DateTime _from;
+  DateTime _from;
   final DateTime _to;
 
   @override
@@ -215,43 +210,97 @@ class _CalendarFABState extends State<CalendarFAB> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    height: MediaQuery.of(context).size.height * 0.1,
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                            child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 10),
-                                child: GestureDetector(
-                                  child: Text(widget._from.formattedYMDhM),
-                                  onTap: () {
-                                    showDatePicker(
-                                        context: context,
-                                        initialDate: widget._from,
-                                        firstDate: firstDay,
-                                        lastDate: lastDay);
-                                    // TODO : flutter 에서 제공하는 DatePicker 로는 구현할 수 없었던 캘린더 화면과
-                                    // TODO : 날짜를 범위로 선택할 수 없어 TableCalendar 패키지를 사용하였는데, 여기서 또 DatePicker를 사용하는게 맞을까?
-                                    // TODO : 차라리 TableCalendar에서
-                                  },
-                                ))),
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                          child: Row(
+                            children: [
+                              Text('시작'),
+                              const Spacer(),
+                              GestureDetector(
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 10),
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.grey.shade200),
+                                    child: Text(
+                                      widget._from.formattedDotYMD,
+                                    )),
+                                onTap: () {
+                                  showDatePicker(
+                                      context: context,
+                                      initialDate: widget._from,
+                                      firstDate: firstDay,
+                                      lastDate: lastDay);
+                                },
+                              ),
+                              GestureDetector(
+                                child: Container(
+                                    margin: const EdgeInsets.symmetric(horizontal: 5),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 10),
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.grey.shade200),
+                                    child: Text(
+                                      widget._from.formattedHm,
+                                    )),
+                                onTap: () {
+                                  showDatePicker(
+                                      context: context,
+                                      initialDate: widget._from,
+                                      firstDate: firstDay,
+                                      lastDate: lastDay);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
                         Line(),
-                        Expanded(
-                            child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 10),
-                                child: GestureDetector(
-                                  child: Text(widget._to.formattedYMDhM),
-                                  onTap: () {
-                                    showDatePicker(
-                                        context: context,
-                                        initialDate: widget._to,
-                                        firstDate: firstDay,
-                                        lastDate: lastDay);
-                                  },
-                                ))),
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                          child: Row(
+                            children: [
+                              Text('종료'),
+                              const Spacer(),
+                              GestureDetector(
+                                child: Container(
+                                    margin: const EdgeInsets.symmetric(horizontal: 5),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 10),
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.grey.shade200),
+                                    child: Text(
+                                      widget._to.formattedDotYMD,
+                                    )),
+                                onTap: () {
+                                  showDatePicker(
+                                      context: context,
+                                      initialDate: widget._to,
+                                      firstDate: firstDay,
+                                      lastDate: lastDay);
+                                },
+                              ),
+                              GestureDetector(
+                                child: Container(
+                                    margin: const EdgeInsets.symmetric(horizontal: 5),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 10),
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.grey.shade200),
+                                    child: Text(
+                                      widget._to.formattedHm,
+                                    )),
+                                onTap: () {
+                                  showDatePicker(
+                                      context: context,
+                                      initialDate: widget._to,
+                                      firstDate: firstDay,
+                                      lastDate: lastDay);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     )),
               ],
