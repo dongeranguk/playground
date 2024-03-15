@@ -1,3 +1,6 @@
+import 'dart:ffi';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:playground/common/dart/extension/date_extension.dart';
 import 'package:playground/screen/main/tab/calendar/vo/vo_schedule_list.dart';
@@ -30,11 +33,13 @@ class _CalendarFragmentState extends State<CalendarFragment> {
   final DateTime _currentDay = DateTime.now();
   late DateTime _focusedDay;
   late DateTime _selectedDay;
+  late DateTime _to;
 
   @override
   void initState() {
     _type = CalendarType.every;
     _selectedDay = _currentDay;
+    _to = _currentDay.add(const Duration(days: 1));
     super.initState();
   }
 
@@ -96,7 +101,7 @@ class _CalendarFragmentState extends State<CalendarFragment> {
           ),
         ),
         floatingActionButton:
-            CalendarFAB(now: DateTime.now(), from: _selectedDay));
+            CalendarFAB(now: DateTime.now(), to: _to));
   }
 
   void selectType(CalendarType type) {
@@ -117,6 +122,14 @@ class _CalendarFragmentState extends State<CalendarFragment> {
   void selectedDay(DateTime selectedDay) {
     setState(() {
       _selectedDay = selectedDay;
+      print('_selectedDay : $_selectedDay');
+    });
+  }
+
+  void changeTo(DateTime newDate) {
+    setState(() {
+      _to = newDate;
+      print('callback event $_to');
     });
   }
 
@@ -126,16 +139,14 @@ class _CalendarFragmentState extends State<CalendarFragment> {
 }
 
 class CalendarFAB extends StatefulWidget {
-  CalendarFAB({
+  const CalendarFAB({
     required DateTime now,
-    required DateTime from,
+    required DateTime to,
     super.key,
   })  : _now = now,
-        _from = DateTime(from.year, from.month, from.day, now.hour),
-        _to = from.add(Duration(days: 1, hours: now.hour + 1));
+        _to = to;
 
   final DateTime _now;
-  DateTime _from;
   final DateTime _to;
 
   @override
@@ -144,9 +155,13 @@ class CalendarFAB extends StatefulWidget {
 
 class _CalendarFABState extends State<CalendarFAB> {
   final TextEditingController _textEditingController = TextEditingController();
+  late DateTime _from;
+  late DateTime _to;
 
   @override
   void initState() {
+    _from = widget._now;
+    _to = widget._to;
     super.initState();
   }
 
@@ -156,154 +171,163 @@ class _CalendarFABState extends State<CalendarFAB> {
       onPressed: () {
         showModalBottomSheet(
           context: context,
-          builder: (context) => SizedBox(
-            height: MediaQuery.of(context).size.height * 0.9,
-            child: Column(
-              children: [
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        child: const Text('취소', style: TextStyle(fontSize: 17)),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      const Text('새로운 이벤트',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.w600)),
-                      TextButton(
-                        child: const Text(
-                          '추가',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.w600),
-                        ),
-                        onPressed: () {},
-                      ),
-                    ]),
-                SizedBox(height: 15),
-                Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    height: MediaQuery.of(context).size.height * 0.1,
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+          builder: (BuildContext context) => StatefulBuilder(
+            builder: (context, setState) => SizedBox(
+              height: MediaQuery.of(context).size.height * 0.9,
+              child: Column(
+                children: [
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 10),
-                          child: TextField(
-                            decoration: const InputDecoration(
-                                hintText: '제목', border: InputBorder.none),
-                            style: TextStyle(fontSize: 15),
-                            controller: _textEditingController,
-                          ),
+                        TextButton(
+                          child:
+                              const Text('취소', style: TextStyle(fontSize: 17)),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                         ),
-                      ],
-                    )),
-                const SizedBox(height: 30),
-                Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                          child: Row(
-                            children: [
-                              Text('시작'),
-                              const Spacer(),
-                              GestureDetector(
-                                child: Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 5),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 10),
-                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.grey.shade200),
-                                    child: Text(
-                                      widget._from.formattedDotYMD,
-                                    )),
-                                onTap: () {
-                                  showDatePicker(
-                                      context: context,
-                                      initialDate: widget._from,
-                                      firstDate: firstDay,
-                                      lastDate: lastDay);
-                                },
-                              ),
-                              GestureDetector(
-                                child: Container(
-                                    margin: const EdgeInsets.symmetric(horizontal: 5),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 10),
-                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.grey.shade200),
-                                    child: Text(
-                                      widget._from.formattedHm,
-                                    )),
-                                onTap: () {
-                                  showDatePicker(
-                                      context: context,
-                                      initialDate: widget._from,
-                                      firstDate: firstDay,
-                                      lastDate: lastDay);
-                                },
-                              ),
-                            ],
+                        const Text('새로운 이벤트',
+                            style: TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.w600)),
+                        TextButton(
+                          child: const Text(
+                            '추가',
+                            style: TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.w600),
                           ),
+                          onPressed: () {},
                         ),
-                        Line(),
-                        Container(
-                          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                          child: Row(
-                            children: [
-                              Text('종료'),
-                              const Spacer(),
-                              GestureDetector(
-                                child: Container(
-                                    margin: const EdgeInsets.symmetric(horizontal: 5),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 10),
-                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.grey.shade200),
-                                    child: Text(
-                                      widget._to.formattedDotYMD,
-                                    )),
-                                onTap: () {
-                                  showDatePicker(
-                                      context: context,
-                                      initialDate: widget._to,
-                                      firstDate: firstDay,
-                                      lastDate: lastDay);
-                                },
-                              ),
-                              GestureDetector(
-                                child: Container(
-                                    margin: const EdgeInsets.symmetric(horizontal: 5),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 10),
-                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.grey.shade200),
-                                    child: Text(
-                                      widget._to.formattedHm,
-                                    )),
-                                onTap: () {
-                                  showDatePicker(
-                                      context: context,
-                                      initialDate: widget._to,
-                                      firstDate: firstDay,
-                                      lastDate: lastDay);
-                                },
-                              ),
-                            ],
+                      ]),
+                  const SizedBox(height: 15),
+                  Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      height: MediaQuery.of(context).size.height * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 10),
+                            child: TextField(
+                              decoration: const InputDecoration(
+                                  hintText: '제목', border: InputBorder.none),
+                              style: const TextStyle(fontSize: 15),
+                              controller: _textEditingController,
+                            ),
                           ),
-                        ),
-                      ],
-                    )),
-              ],
+                        ],
+                      )),
+                  const SizedBox(height: 30),
+                  Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
+                            child: Row(
+                              children: [
+                                const Text('시작'),
+                                const Spacer(),
+                                CupertinoButton(
+                                    child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 10),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.circular(8),
+                                            color: Colors.grey.shade200),
+                                        child: Text(_from.formattedDotYMD)),
+                                    onPressed: () => showDialog(
+                                        CupertinoDatePicker(
+                                            initialDateTime: _from,
+                                            minimumYear: DateTime.now().year,
+                                            maximumYear: DateTime.now().year+3,
+                                            mode: CupertinoDatePickerMode.date,
+                                            onDateTimeChanged:
+                                                (DateTime newDate) => setState(
+                                                    () => _from = newDate)))),
+                                CupertinoButton(
+                                    child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 10),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.circular(8),
+                                            color: Colors.grey.shade200),
+                                        child: Text(_from.formattedHm)),
+                                    onPressed: () => showDialog(
+                                        CupertinoDatePicker(
+                                            use24hFormat: false,
+                                            initialDateTime: _from,
+                                            mode: CupertinoDatePickerMode.time,
+                                            minuteInterval: 10,
+                                            onDateTimeChanged:
+                                                (DateTime newDate) => setState(
+                                                    () => _from = newDate)))),
+                              ],
+                            ),
+                          ),
+                          Line(),
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
+                            child: Row(
+                              children: [
+                                const Text('종료'),
+                                const Spacer(),
+                                CupertinoButton(
+                                    child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 10),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            color: Colors.grey.shade200),
+                                        child: Text(_to.formattedDotYMD)),
+                                    onPressed: () => showDialog(
+                                        CupertinoDatePicker(
+                                            initialDateTime: _to,
+                                            minimumYear: DateTime.now().year,
+                                            maximumYear: DateTime.now().year+3,
+                                            mode: CupertinoDatePickerMode.date,
+                                            onDateTimeChanged:
+                                                (DateTime newDate) => setState(
+                                                    () => _to = newDate)))),
+                                CupertinoButton(
+                                    child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 10),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            color: Colors.grey.shade200),
+                                        child: Text(_to.formattedHm)),
+                                    onPressed: () => showDialog(
+                                        CupertinoDatePicker(
+                                            use24hFormat: false,
+                                            initialDateTime: _to,
+                                            mode: CupertinoDatePickerMode.time,
+                                            minuteInterval: 10,
+                                            onDateTimeChanged:
+                                                (DateTime newDate) => setState(
+                                                    () => _to = newDate)))),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )),
+                ],
+              ),
             ),
           ),
           isScrollControlled: true,
@@ -311,6 +335,23 @@ class _CalendarFABState extends State<CalendarFAB> {
       },
       child: const Icon(Icons.add),
     );
+  }
+
+  void selectedDay(DateTime newDate) {
+    setState(() {
+      _to = newDate;
+      print('_to : $_to');
+    });
+  }
+
+  void showDialog(Widget child) {
+    showCupertinoModalPopup<void>(
+        context: context,
+        builder: (BuildContext context) => Container(
+              color: Colors.white,
+              height: 200,
+              child: child,
+            ));
   }
 }
 
