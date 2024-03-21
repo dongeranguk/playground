@@ -3,7 +3,7 @@ class UserSchedule {
   final DateTime from;
   final DateTime to;
   final String title;
-  final String memo;
+  String? memo;
 
   UserSchedule(
     this.memo, {
@@ -12,4 +12,9 @@ class UserSchedule {
     required this.to,
     required this.title,
   });
+
+  @override
+  String toString() {
+    return 'UserSchedule{name: $name, from: $from, to: $to, title: $title, memo: $memo}';
+  }
 }
