@@ -7,10 +7,10 @@ import 'package:playground/screen/main/tab/board/w_board_detail.dart';
 
 class BoardItem extends StatefulWidget {
   final Board board;
-  final List<BoardComment> comments;
+  // final List<BoardComment> comments;
   final Function(int) callback;
 
-  const BoardItem(this.board, this.comments, {super.key, required this.callback});
+  const BoardItem(this.board, {super.key, required this.callback});
 
   @override
   State<BoardItem> createState() => _BoardItemState();
@@ -36,10 +36,10 @@ class _BoardItemState extends State<BoardItem> {
                   : const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
           // TODO : 읽은 글일 경우 읽은 글임을 나타내는 TextStyle로 스위칭
           const SizedBox(width: 10),
-          Text(
-            widget.comments.length.toString(),
-            style: const TextStyle(fontSize: 12, color: Colors.blue),
-          )
+          // Text(
+          //   widget.comments.length.toString(),
+          //   style: const TextStyle(fontSize: 12, color: Colors.blue),
+          // )
         ],
       ),
       onTap: () => Navigator.push(
@@ -47,7 +47,7 @@ class _BoardItemState extends State<BoardItem> {
         MaterialPageRoute(
           builder: (context) => BoardDetail(
               board: widget.board,
-              comments: widget.comments,
+              // comments: widget.comments,
               callback: setRead,
               callback2: widget.callback),
         ),

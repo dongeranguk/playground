@@ -17,13 +17,13 @@ const List<String> list = ['첫번째', '두번째', '세번째'];
 
 class BoardDetail extends StatefulWidget {
   final Board board;
-  final List<BoardComment> comments;
+  // final List<BoardComment> comments;
   final VoidCallback callback;
   final Function(int) callback2;
 
   const BoardDetail(
       {required this.board,
-      required this.comments,
+      // required this.comments,
       required this.callback,
       required this.callback2,
       super.key});
@@ -34,7 +34,7 @@ class BoardDetail extends StatefulWidget {
 
 class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
   late Board _board;
-  late List<BoardComment> _comments;
+  // late List<BoardComment> _comments;
   final QuillController _controller = QuillController.basic();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
@@ -43,7 +43,7 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
   @override
   void initState() {
     _board = widget.board;
-    _comments = widget.comments;
+    // _comments = widget.comments;
 
     _controller.document = Document.fromJson(jsonDecode(_board.content));
     _configurations = QuillEditorConfigurations(
@@ -124,14 +124,14 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
                       width: 500,
                       child: Text(_board.content.toString()),
                     ),
-              Column(
-                children: _comments
-                    .map((e) => Row(children: [
-                          Text(e.commentId.toString()),
-                          Text(e.content),
-                        ]))
-                    .toList(),
-              )
+              // Column(
+              //   children: _comments
+              //       .map((e) => Row(children: [
+              //             Text(e.commentId.toString()),
+              //             Text(e.content),
+              //           ]))
+              //       .toList(),
+              // )
             ],
           ),
         ),

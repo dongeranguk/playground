@@ -1,5 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:playground/common/data/BoardRepository.dart';
+import 'package:playground/common/data/local/local_db.dart';
 import 'package:playground/screen/main/tab/board/screen/s_write_board.dart';
 import 'package:playground/screen/main/tab/board/vo/vo_board_comment_list.dart';
 import 'package:playground/screen/main/tab/board/vo/vo_board_list.dart';
@@ -18,26 +24,38 @@ class BoardFragment extends StatefulWidget {
 }
 
 class _BoardFragmentState extends State<BoardFragment> {
-  late QuillController _controller;
+  final BoardRepository boardRepository = LocalDB.instance;
 
   @override
   void initState() {
-    _controller = QuillController.basic();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            SliverList(
-                delegate: SliverChildListDelegate(
-              boardList.reversed
-                  .map((e) => BoardItem(e, getCommentsByBoardId(e.id), callback: removeBoard))
-                  .toList(),
-            ))
-          ],
+        body: FutureBuilder(
+          future: boardRepository.getBoardList(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final boards = snapshot.data;
+
+
+
+              if (boards != null) {
+                return ListView.builder(
+                    itemCount: boards.length,
+                    itemBuilder: (context, index) {
+                      print('boards[$index].id : ${boards[index].id}');
+                      return BoardItem(boards[index], callback: removeBoard);
+                    });
+              }
+            }
+            if(snapshot.connectionState != ConnectionState.done){
+              return const CircularProgressIndicator();
+            }
+            return const Text('등록된 글이 없어요.');
+          },
         ),
         floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.add),
@@ -51,23 +69,25 @@ class _BoardFragmentState extends State<BoardFragment> {
   }
 
   void addBoard(Board board) {
-    boardList.add(board);
-    setState(() {});
-  }
-
-  void removeBoard(int targetId) {
     setState(() {
-      boardList.removeWhere((element) => element.id == targetId);
+      boardList.add(board);
+      boardRepository.addBoard(board);
     });
   }
 
-  List<BoardComment> getCommentsByBoardId(int id) {
-    return boardCommentList.where((element) => element.boardId == id).toList();
+  void removeBoard(Id boardId) {
+    setState(() {
+      boardRepository.removeBoard(boardId);
+    });
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  void setRead(int boardId) {
+    setState(() {
+
+    });
   }
+
+  // List<BoardComment> getCommentsByBoardId(int id) {
+  //   return boardCommentList.where((element) => element.boardId == id).toList();
+  // }
 }
