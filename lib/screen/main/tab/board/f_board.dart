@@ -46,7 +46,6 @@ class _BoardFragmentState extends State<BoardFragment> {
                 return ListView.builder(
                     itemCount: boards.length,
                     itemBuilder: (context, index) {
-                      print('boards[$index].id : ${boards[index].id}');
                       return BoardItem(boards[index], callback: removeBoard);
                     });
               }

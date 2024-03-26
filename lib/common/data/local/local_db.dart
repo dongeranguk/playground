@@ -19,6 +19,10 @@ class LocalDB implements BoardRepository {
     );
   }
 
+  static Future<bool> restore() async {
+    return await _isar.close(deleteFromDisk: true);
+  }
+
   @override
   Future<void> addBoard(Board board) async {
     await _isar.writeTxn(() async {
@@ -38,7 +42,6 @@ class LocalDB implements BoardRepository {
 
   @override
   Future<void> removeBoard(Id boardId) async {
-    print('boardId : $boardId');
     await _isar.writeTxn(() async {
       await _isar.boards.delete(boardId);
     });

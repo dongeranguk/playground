@@ -10,5 +10,6 @@ void main() async {
   final bindings = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: bindings);
   await LocalDB.init();
+  //await LocalDB.restore();
   initializeDateFormatting().then((_) => runApp(const ProviderScope(child: WiseApp())));
 }

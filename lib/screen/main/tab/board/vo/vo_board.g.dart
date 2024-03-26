@@ -198,6 +198,7 @@ Board _boardDeserialize(
     isDeleted: reader.readBoolOrNull(offsets[5]),
     likeCount: reader.readLongOrNull(offsets[7]),
   );
+  object.id = id;
   object.isRead = reader.readBool(offsets[6]);
   object.updatedAt = reader.readDateTimeOrNull(offsets[9]);
   return object;
@@ -253,7 +254,9 @@ List<IsarLinkBase<dynamic>> _boardGetLinks(Board object) {
   return [];
 }
 
-void _boardAttach(IsarCollection<dynamic> col, Id id, Board object) {}
+void _boardAttach(IsarCollection<dynamic> col, Id id, Board object) {
+  object.id = id;
+}
 
 extension BoardQueryWhereSort on QueryBuilder<Board, Board, QWhere> {
   QueryBuilder<Board, Board, QAfterWhere> anyId() {

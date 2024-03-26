@@ -6,7 +6,7 @@ part 'vo_board.g.dart';
 
 @collection
 class Board {
-  final Id id = Isar.autoIncrement;
+  Id id = Isar.autoIncrement;
 
   @Index(type: IndexType.value)
   String title;
