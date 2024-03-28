@@ -30,11 +30,11 @@ class _BoardItemState extends State<BoardItem> {
     return ListTile(
       title: Row(
         children: [
-          Text(widget.board.title,
-              style: (_board.isRead)
-                  ? const TextStyle(fontSize: 17, fontWeight: FontWeight.normal)
-                  : const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-          // TODO : 읽은 글일 경우 읽은 글임을 나타내는 TextStyle로 스위칭
+          Flexible(
+            child: Text(widget.board.title,
+                overflow: TextOverflow.ellipsis,
+                style:  TextStyle(fontSize: 17, fontWeight: _board.isRead ? FontWeight.normal : FontWeight.bold)),
+          ),
           const SizedBox(width: 10),
           // Text(
           //   widget.comments.length.toString(),
