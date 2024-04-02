@@ -1,31 +1,22 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:playground/common/data/BoardRepository.dart';
-import 'package:playground/common/data/local/local_db.dart';
+import 'package:playground/screen/main/tab/board/f_board.riverpod.dart';
 import 'package:playground/screen/main/tab/board/screen/s_write_board.dart';
-import 'package:playground/screen/main/tab/board/vo/vo_board_comment_list.dart';
-import 'package:playground/screen/main/tab/board/vo/vo_board_list.dart';
 import 'package:playground/screen/main/tab/board/w_board_item.dart';
-import 'package:playground/screen/main/tab/board/vo/vo_board_comment.dart';
 
 import 'vo/vo_board.dart';
 
-class BoardFragment extends StatefulWidget {
+class BoardFragment extends ConsumerStatefulWidget {
   final String tabName;
 
   const BoardFragment({required this.tabName, super.key});
 
   @override
-  State<BoardFragment> createState() => _BoardFragmentState();
+  ConsumerState<BoardFragment> createState() => _BoardFragmentState();
 }
 
-class _BoardFragmentState extends State<BoardFragment> {
-  final BoardRepository boardRepository = LocalDB.instance;
-
+class _BoardFragmentState extends ConsumerState<BoardFragment> {
   @override
   void initState() {
     super.initState();
@@ -33,29 +24,17 @@ class _BoardFragmentState extends State<BoardFragment> {
 
   @override
   Widget build(BuildContext context) {
+    final boards = ref.watch(boardsProvider);
+
     return Scaffold(
-        body: FutureBuilder(
-          future: boardRepository.getBoardList(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final boards = snapshot.data;
-
-
-
-              if (boards != null) {
-                return ListView.builder(
-                    itemCount: boards.length,
-                    itemBuilder: (context, index) {
-                      return BoardItem(boards[index], callback: removeBoard);
-                    });
-              }
-            }
-            if(snapshot.connectionState != ConnectionState.done){
-              return const CircularProgressIndicator();
-            }
-            return const Text('등록된 글이 없어요.');
-          },
-        ),
+        body: switch (boards) {
+          AsyncError(:final error) => Text('Error : $error'),
+          AsyncData(:final value) => ListView.builder(
+              itemCount: value.length,
+              itemBuilder: (context, index) =>
+                  BoardItem(value[index])),
+          _ => const CircularProgressIndicator(),
+        },
         floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.add),
             onPressed: () {
@@ -63,30 +42,19 @@ class _BoardFragmentState extends State<BoardFragment> {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          WriteBoardScreen(callback: addBoard)));
+                          const WriteBoardScreen()));
             }));
   }
 
-  void addBoard(Board board) {
-    setState(() {
-      boardList.add(board);
-      boardRepository.addBoard(board);
-    });
-  }
-
   void removeBoard(Id boardId) {
-    setState(() {
-      boardRepository.removeBoard(boardId);
-    });
+    setState(() {});
   }
 
   void setRead(int boardId) {
-    setState(() {
-
-    });
+    setState(() {});
   }
 
-  // List<BoardComment> getCommentsByBoardId(int id) {
-  //   return boardCommentList.where((element) => element.boardId == id).toList();
-  // }
+// List<BoardComment> getCommentsByBoardId(int id) {
+//   return boardCommentList.where((element) => element.boardId == id).toList();
+// }
 }
