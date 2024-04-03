@@ -2,21 +2,21 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:playground/screen/main/tab/board/f_board.riverpod.dart';
 import 'package:playground/screen/main/tab/board/vo/vo_board_list.dart';
 
 import '../vo/vo_board.dart';
 
-class WriteBoardScreen extends StatefulWidget {
-  final Function(Board) callback;
+class WriteBoardScreen extends ConsumerStatefulWidget {
 
-  const WriteBoardScreen(
-      {required this.callback, super.key});
+  const WriteBoardScreen({super.key});
 
   @override
-  State<WriteBoardScreen> createState() => _WriteBoardScreenState();
+  ConsumerState<WriteBoardScreen> createState() => _WriteBoardScreenState();
 }
 
-class _WriteBoardScreenState extends State<WriteBoardScreen> {
+class _WriteBoardScreenState extends ConsumerState<WriteBoardScreen> {
   final QuillController _controller = QuillController.basic();
   final TextEditingController _textEditingController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -68,10 +68,7 @@ class _WriteBoardScreenState extends State<WriteBoardScreen> {
           TextButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  widget.callback.call(Board(_textEditingController.text,
-                      jsonEncode(_controller.document.toDelta().toJson()),
-                      id: boardList.last.id + 1, createdBy: '김동욱')); // TODO : id 를 부여하기 까다로워서 임의 값 10을 넣었지만, 추후에 유일성이 보장된 id 를 넣어주자.
-
+                  ref.read(boardsProvider.notifier).addBoard(Board(_textEditingController.text, jsonEncode(_controller.document.toDelta().toJson()), createdBy: '김동욱'));
                   Navigator.pop(context);
                 }
               },

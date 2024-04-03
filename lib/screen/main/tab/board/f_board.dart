@@ -1,44 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
+import 'package:playground/screen/main/tab/board/f_board.riverpod.dart';
 import 'package:playground/screen/main/tab/board/screen/s_write_board.dart';
-import 'package:playground/screen/main/tab/board/vo/vo_board_comment_list.dart';
-import 'package:playground/screen/main/tab/board/vo/vo_board_list.dart';
 import 'package:playground/screen/main/tab/board/w_board_item.dart';
-import 'package:playground/screen/main/tab/board/vo/vo_board_comment.dart';
 
 import 'vo/vo_board.dart';
 
-class BoardFragment extends StatefulWidget {
+class BoardFragment extends ConsumerStatefulWidget {
   final String tabName;
 
   const BoardFragment({required this.tabName, super.key});
 
   @override
-  State<BoardFragment> createState() => _BoardFragmentState();
+  ConsumerState<BoardFragment> createState() => _BoardFragmentState();
 }
 
-class _BoardFragmentState extends State<BoardFragment> {
-  late QuillController _controller;
-
+class _BoardFragmentState extends ConsumerState<BoardFragment> {
   @override
   void initState() {
-    _controller = QuillController.basic();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final boards = ref.watch(boardsProvider);
+
     return Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            SliverList(
-                delegate: SliverChildListDelegate(
-              boardList.reversed
-                  .map((e) => BoardItem(e, getCommentsByBoardId(e.id), callback: removeBoard))
-                  .toList(),
-            ))
-          ],
-        ),
+        body: switch (boards) {
+          AsyncError(:final error) => Text('Error : $error'),
+          AsyncData(:final value) => ListView.builder(
+              itemCount: value.length,
+              itemBuilder: (context, index) =>
+                  BoardItem(value[index])),
+          _ => const CircularProgressIndicator(),
+        },
         floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.add),
             onPressed: () {
@@ -46,28 +42,19 @@ class _BoardFragmentState extends State<BoardFragment> {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          WriteBoardScreen(callback: addBoard)));
+                          const WriteBoardScreen()));
             }));
   }
 
-  void addBoard(Board board) {
-    boardList.add(board);
+  void removeBoard(Id boardId) {
     setState(() {});
   }
 
-  void removeBoard(int targetId) {
-    setState(() {
-      boardList.removeWhere((element) => element.id == targetId);
-    });
+  void setRead(int boardId) {
+    setState(() {});
   }
 
-  List<BoardComment> getCommentsByBoardId(int id) {
-    return boardCommentList.where((element) => element.boardId == id).toList();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+// List<BoardComment> getCommentsByBoardId(int id) {
+//   return boardCommentList.where((element) => element.boardId == id).toList();
+// }
 }

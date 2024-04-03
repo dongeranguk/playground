@@ -4,37 +4,36 @@ import 'dart:convert';
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playground/common/common.dart';
 import 'package:playground/common/dart/extension/date_extension.dart';
 import 'package:playground/screen/main/tab/board/f_board.dart';
+import 'package:playground/screen/main/tab/board/f_board.riverpod.dart';
 import 'package:playground/screen/main/tab/board/s_modify_board.dart';
 import 'package:playground/screen/main/tab/board/vo/vo_board.dart';
 import 'package:playground/screen/main/tab/board/vo/vo_board_comment.dart';
 import 'package:playground/screen/main/tab/board/vo/vo_board_list.dart';
 import 'package:playground/screen/main/tab/mail/s_mail_detail.dart';
 
-const List<String> list = ['첫번째', '두번째', '세번째'];
-
-class BoardDetail extends StatefulWidget {
+class BoardDetail extends ConsumerStatefulWidget {
   final Board board;
-  final List<BoardComment> comments;
-  final VoidCallback callback;
-  final Function(int) callback2;
+
+  // final List<BoardComment> comments;
 
   const BoardDetail(
       {required this.board,
-      required this.comments,
-      required this.callback,
-      required this.callback2,
+      // required this.comments,
       super.key});
 
   @override
-  State<BoardDetail> createState() => _BoardDetailState();
+  ConsumerState<BoardDetail> createState() => _BoardDetailState();
 }
 
-class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
+class _BoardDetailState extends ConsumerState<BoardDetail>
+    with AfterLayoutMixin {
   late Board _board;
-  late List<BoardComment> _comments;
+
+  // late List<BoardComment> _comments;
   final QuillController _controller = QuillController.basic();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
@@ -43,7 +42,7 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
   @override
   void initState() {
     _board = widget.board;
-    _comments = widget.comments;
+    // _comments = widget.comments;
 
     _controller.document = Document.fromJson(jsonDecode(_board.content));
     _configurations = QuillEditorConfigurations(
@@ -62,7 +61,7 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
   FutureOr<void> afterFirstLayout(BuildContext context) {
     _board.isRead = !_board.isRead;
 
-    widget.callback.call();
+    ref.read(boardsProvider.notifier).setRead(_board.id);
   }
 
   @override
@@ -104,7 +103,7 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
                       child: const Text('수정')),
                   TextButton(
                       onPressed: () {
-                        widget.callback2.call(_board.id);
+                        ref.read(boardsProvider.notifier).removeBoard(_board.id);
                         Navigator.pop(context);
                       },
                       child: const Text('삭제')),
@@ -119,19 +118,15 @@ class _BoardDetailState extends State<BoardDetail> with AfterLayoutMixin {
                           focusNode: _focusNode,
                           configurations: _configurations),
                     )
-                  : RoundedContainer(
-                      height: 500,
-                      width: 500,
-                      child: Text(_board.content.toString()),
-                    ),
-              Column(
-                children: _comments
-                    .map((e) => Row(children: [
-                          Text(e.commentId.toString()),
-                          Text(e.content),
-                        ]))
-                    .toList(),
-              )
+                  : Text(_board.content.toString()),
+              // Column(
+              //   children: _comments
+              //       .map((e) => Row(children: [
+              //             Text(e.commentId.toString()),
+              //             Text(e.content),
+              //           ]))
+              //       .toList(),
+              // )
             ],
           ),
         ),
