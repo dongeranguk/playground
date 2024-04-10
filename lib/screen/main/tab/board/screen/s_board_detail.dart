@@ -1,19 +1,13 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:playground/common/common.dart';
 import 'package:playground/common/dart/extension/date_extension.dart';
-import 'package:playground/screen/main/tab/board/f_board.dart';
 import 'package:playground/screen/main/tab/board/f_board.riverpod.dart';
-import 'package:playground/screen/main/tab/board/s_modify_board.dart';
+import 'package:playground/screen/main/tab/board/screen/s_modify_board.dart';
 import 'package:playground/screen/main/tab/board/vo/vo_board.dart';
-import 'package:playground/screen/main/tab/board/vo/vo_board_comment.dart';
-import 'package:playground/screen/main/tab/board/vo/vo_board_list.dart';
-import 'package:playground/screen/main/tab/mail/s_mail_detail.dart';
 
 class BoardDetail extends ConsumerStatefulWidget {
   final Board board;
@@ -34,25 +28,11 @@ class _BoardDetailState extends ConsumerState<BoardDetail>
   late Board _board;
 
   // late List<BoardComment> _comments;
-  final QuillController _controller = QuillController.basic();
-  final ScrollController _scrollController = ScrollController();
-  final FocusNode _focusNode = FocusNode();
-  late QuillEditorConfigurations _configurations;
 
   @override
   void initState() {
     _board = widget.board;
     // _comments = widget.comments;
-
-    _controller.document = Document.fromJson(jsonDecode(_board.content));
-    _configurations = QuillEditorConfigurations(
-      controller: _controller,
-      readOnly: true,
-      autoFocus: false,
-      expands: true,
-      scrollable: true,
-      showCursor: false,
-    );
 
     super.initState();
   }
@@ -95,7 +75,6 @@ class _BoardDetailState extends ConsumerState<BoardDetail>
                             MaterialPageRoute(builder: (context) {
                           return ModifyBoardScreen(
                               board: _board,
-                              controller: _controller,
                               callback:
                                   modifyBoard); // TODO : 글 작성 화면과 비슷하므로 글 작성 위젯을 재활용할 수 있도록 해보자.
                         }));
@@ -109,16 +88,9 @@ class _BoardDetailState extends ConsumerState<BoardDetail>
                       child: const Text('삭제')),
                 ],
               ),
-              !_controller.document.isEmpty()
-                  ? RoundedContainer(
-                      height: 500,
-                      width: 500,
-                      child: QuillEditor(
-                          scrollController: _scrollController,
-                          focusNode: _focusNode,
-                          configurations: _configurations),
-                    )
-                  : Text(_board.content.toString()),
+              SizedBox(height: MediaQuery.of(context).size.height * 1.0,
+                  width: MediaQuery.of(context).size.width * 1.0,
+                  child: Markdown(data: _board.content)),
               // Column(
               //   children: _comments
               //       .map((e) => Row(children: [
