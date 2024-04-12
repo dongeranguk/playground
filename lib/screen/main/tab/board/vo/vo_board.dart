@@ -9,7 +9,7 @@ class Board {
   Id id = Isar.autoIncrement;
 
   @Index(type: IndexType.value)
-  String title;
+  String? title;
 
   @Index(type: IndexType.value)
   String content;

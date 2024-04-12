@@ -6,7 +6,6 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playground/common/dart/extension/date_extension.dart';
 import 'package:playground/screen/main/tab/board/f_board.riverpod.dart';
-import 'package:playground/screen/main/tab/board/screen/s_modify_board.dart';
 import 'package:playground/screen/main/tab/board/vo/vo_board.dart';
 
 class BoardDetail extends ConsumerStatefulWidget {
@@ -54,7 +53,7 @@ class _BoardDetailState extends ConsumerState<BoardDetail>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(_board.title,
+              Text(_board.title!,
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 15),
@@ -71,13 +70,7 @@ class _BoardDetailState extends ConsumerState<BoardDetail>
                   const Spacer(),
                   TextButton(
                       onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return ModifyBoardScreen(
-                              board: _board,
-                              callback:
-                                  modifyBoard); // TODO : 글 작성 화면과 비슷하므로 글 작성 위젯을 재활용할 수 있도록 해보자.
-                        }));
+                        ref.read(boardsProvider.notifier).editBoard(_board); // TODO : 글 작성 화면과 비슷하므로 글 작성 위젯을 재활용할 수 있도록 해보자.
                       },
                       child: const Text('수정')),
                   TextButton(

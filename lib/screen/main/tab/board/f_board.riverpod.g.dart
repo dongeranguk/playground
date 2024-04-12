@@ -6,7 +6,7 @@ part of 'f_board.riverpod.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$boardsHash() => r'db37a5389474ce8d901b469b02810f458a5818f4';
+String _$boardsHash() => r'00deac16b7c5d8716c34e0045d33b9dc4bc235fe';
 
 /// See also [Boards].
 @ProviderFor(Boards)

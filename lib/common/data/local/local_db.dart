@@ -23,6 +23,13 @@ class LocalDB {
     });
   }
 
+  static Future<void> editBoard(Board board) async {
+    await _isar.writeTxn(() async {
+
+      await _isar.boards.put(board);
+    });
+  }
+
   static Future<List<Board>> getBoardList() async {
     return await _isar.boards.where().sortByCreatedAtDesc().findAll();
   }

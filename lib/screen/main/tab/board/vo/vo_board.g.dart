@@ -147,7 +147,12 @@ int _boardEstimateSize(
   }
   bytesCount += 3 + object.content.length * 3;
   bytesCount += 3 + object.createdBy.length * 3;
-  bytesCount += 3 + object.title.length * 3;
+  {
+    final value = object.title;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -186,7 +191,7 @@ Board _boardDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Board(
-    reader.readString(offsets[8]),
+    reader.readStringOrNull(offsets[8]),
     reader.readString(offsets[2]),
     comments: reader.readObjectList<BoardComment>(
       offsets[1],
@@ -238,7 +243,7 @@ P _boardDeserializeProp<P>(
     case 7:
       return (reader.readLongOrNull(offset)) as P;
     case 8:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 9:
       return (reader.readDateTimeOrNull(offset)) as P;
     default:
@@ -348,7 +353,27 @@ extension BoardQueryWhere on QueryBuilder<Board, Board, QWhereClause> {
     });
   }
 
-  QueryBuilder<Board, Board, QAfterWhereClause> titleEqualTo(String title) {
+  QueryBuilder<Board, Board, QAfterWhereClause> titleIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'title',
+        value: [null],
+      ));
+    });
+  }
+
+  QueryBuilder<Board, Board, QAfterWhereClause> titleIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'title',
+        lower: [null],
+        includeLower: false,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Board, Board, QAfterWhereClause> titleEqualTo(String? title) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
         indexName: r'title',
@@ -357,7 +382,7 @@ extension BoardQueryWhere on QueryBuilder<Board, Board, QWhereClause> {
     });
   }
 
-  QueryBuilder<Board, Board, QAfterWhereClause> titleNotEqualTo(String title) {
+  QueryBuilder<Board, Board, QAfterWhereClause> titleNotEqualTo(String? title) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -392,7 +417,7 @@ extension BoardQueryWhere on QueryBuilder<Board, Board, QWhereClause> {
   }
 
   QueryBuilder<Board, Board, QAfterWhereClause> titleGreaterThan(
-    String title, {
+    String? title, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -406,7 +431,7 @@ extension BoardQueryWhere on QueryBuilder<Board, Board, QWhereClause> {
   }
 
   QueryBuilder<Board, Board, QAfterWhereClause> titleLessThan(
-    String title, {
+    String? title, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -420,8 +445,8 @@ extension BoardQueryWhere on QueryBuilder<Board, Board, QWhereClause> {
   }
 
   QueryBuilder<Board, Board, QAfterWhereClause> titleBetween(
-    String lowerTitle,
-    String upperTitle, {
+    String? lowerTitle,
+    String? upperTitle, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -1289,8 +1314,24 @@ extension BoardQueryFilter on QueryBuilder<Board, Board, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Board, Board, QAfterFilterCondition> titleIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'title',
+      ));
+    });
+  }
+
+  QueryBuilder<Board, Board, QAfterFilterCondition> titleIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'title',
+      ));
+    });
+  }
+
   QueryBuilder<Board, Board, QAfterFilterCondition> titleEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1303,7 +1344,7 @@ extension BoardQueryFilter on QueryBuilder<Board, Board, QFilterCondition> {
   }
 
   QueryBuilder<Board, Board, QAfterFilterCondition> titleGreaterThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -1318,7 +1359,7 @@ extension BoardQueryFilter on QueryBuilder<Board, Board, QFilterCondition> {
   }
 
   QueryBuilder<Board, Board, QAfterFilterCondition> titleLessThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -1333,8 +1374,8 @@ extension BoardQueryFilter on QueryBuilder<Board, Board, QFilterCondition> {
   }
 
   QueryBuilder<Board, Board, QAfterFilterCondition> titleBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -1823,7 +1864,7 @@ extension BoardQueryProperty on QueryBuilder<Board, Board, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Board, String, QQueryOperations> titleProperty() {
+  QueryBuilder<Board, String?, QQueryOperations> titleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'title');
     });

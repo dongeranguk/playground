@@ -15,7 +15,7 @@ class BoardItem extends ConsumerWidget {
       title: Row(
         children: [
           Flexible(
-            child: Text(_board.title,
+            child: Text(_board.title!,
                 overflow: TextOverflow.ellipsis,
                 style:  TextStyle(fontSize: 17, fontWeight: _board.isRead ? FontWeight.normal : FontWeight.bold)),
           ),

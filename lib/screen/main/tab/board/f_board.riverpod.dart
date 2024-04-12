@@ -1,11 +1,12 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/material.dart';
+import 'package:playground/app.dart';
 import 'package:playground/common/data/local/local_db.dart';
+import 'package:playground/screen/main/tab/board/screen/s_write_board.dart';
 import 'package:playground/screen/main/tab/board/vo/vo_board.dart';
+import 'package:playground/screen/main/tab/board/vo/vo_write_board_result.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'f_board.riverpod.g.dart';
-
-// final boardsProvider = FutureProvider<List<Board>>((ref) => LocalDB.getBoardList());
 
 @riverpod
 class Boards extends _$Boards {
@@ -18,13 +19,41 @@ class Boards extends _$Boards {
     return _fetchBoard();
   }
 
-  Future<void> addBoard(Board board) async {
-    state = const AsyncValue.loading();
+  Future<void> addBoard() async {
 
-    state = await AsyncValue.guard(() async {
-      await LocalDB.addBoard(board);
-      return _fetchBoard();
-    });
+    final WriteBoardResult result = await navigatorKey.currentState?.push(MaterialPageRoute(builder: (context) => const WriteBoardScreen()));
+
+    if(result != null) {
+      state = await AsyncValue.guard(() async {
+
+        await LocalDB.addBoard(Board(result.title, result.content, createdBy: '김동욱'));
+
+        if(navigatorKey.currentContext!.mounted) {
+          ScaffoldMessenger.of(navigatorKey.currentContext!)..removeCurrentSnackBar()..showSnackBar(const SnackBar(content: Text('저장되었어요.')));
+        }
+
+        return _fetchBoard();
+      });
+    }
+  }
+  
+  Future<void> editBoard(Board board) async {
+    final WriteBoardResult result = await navigatorKey.currentState!.push(MaterialPageRoute(builder: (context) => WriteBoardScreen(boardForEdit: board)));
+
+    if(result != null) {
+      state = await AsyncValue.guard(() async {
+        board.updatedAt = DateTime.now();
+        board.content = result.content;
+
+        await LocalDB.editBoard(board);
+        
+        if(navigatorKey.currentState!.mounted) {
+          ScaffoldMessenger.of(navigatorKey.currentContext!)..removeCurrentSnackBar()..showSnackBar(const SnackBar(content: Text('수정되었어요.')));
+        }
+
+        return _fetchBoard();
+      });
+    }
   }
 
   Future<void> removeBoard(int boardId) async {
