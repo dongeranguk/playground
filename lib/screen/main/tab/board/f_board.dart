@@ -38,11 +38,7 @@ class _BoardFragmentState extends ConsumerState<BoardFragment> {
         floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.add),
             onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          const WriteBoardScreen()));
+              ref.read(boardsProvider.notifier).addBoard();
             }));
   }
 
