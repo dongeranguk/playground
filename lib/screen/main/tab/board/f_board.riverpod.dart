@@ -61,6 +61,11 @@ class Boards extends _$Boards {
 
     state = await AsyncValue.guard(() async {
       await LocalDB.removeBoard(boardId);
+
+      if(navigatorKey.currentState!.mounted) {
+        ScaffoldMessenger.of(navigatorKey.currentContext!)..removeCurrentSnackBar()..showSnackBar(const SnackBar(content: Text('삭제 되었어요.')));
+      }
+
       return _fetchBoard();
     });
   }
@@ -69,10 +74,25 @@ class Boards extends _$Boards {
     state = const AsyncValue.loading();
 
     state = await AsyncValue.guard(() async {
-      await LocalDB.getBoard().then((value) => value?.isRead = true);
+      await LocalDB.getBoard(boardId).then((value) => value?.isRead = true);
 
       return _fetchBoard();
     });
   }
 
+  // Future<List<BoardComment>> getComments(int boardId) async {
+  //   state = const AsyncValue.loading();
+  //
+  // }
+
+  // Future<void> addComment(int boardId, BoardComment comment) async {
+  //   print('add Comment!');
+  //   state = const AsyncValue.loading();
+  //
+  //   state = await AsyncValue.guard(() async {
+  //     await LocalDB.addComment(boardId, comment);
+  //
+  //       return _fetchBoard();
+  //     });
+  // }
 }

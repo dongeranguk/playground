@@ -1,6 +1,4 @@
 import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:playground/screen/main/tab/board/vo/vo_board_comment.dart';
 
 part 'vo_board.g.dart';
 
@@ -26,29 +24,30 @@ class Board {
       {required this.createdBy,
       this.likeCount = 0,
       this.isDeleted = false,
-      this.comments})
+      this.comments,
+      })
       : createdAt = DateTime.now(),
         updatedAt = null,
-        isRead = false;
-
-  // void setComments(List<BoardComment> comments) {
-  //   for (BoardComment comment in comments) {
-  //     if (comment.boardId == id) {
-  //       this.comments?.add(comment);
-  //     }
-  //   }
-  // }
-
+        isRead = false
+  ;
 
   @override
   String toString() {
     return 'Board{id: $id, title: $title, content: $content, likeCount: $likeCount, isRead: $isRead, isDeleted: $isDeleted, createdBy: $createdBy, createdAt: $createdAt, updatedAt: $updatedAt, comments: $comments}';
   }
-
-  List<BoardComment>? get boardComments => comments;
 }
 
 @embedded
 class BoardComment {
+  BoardComment({this.content, this.createdBy}) : createdAt =  DateTime.now();
   String? content;
+  String? createdBy;
+  DateTime? createdAt;
+
+  @override
+  String toString() {
+    return 'BoardComment{content: $content, createdBy: $createdBy, createdAt: $createdAt}';
+  }
+
+
 }

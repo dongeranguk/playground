@@ -17,55 +17,49 @@ const BoardSchema = CollectionSchema(
   name: r'Board',
   id: -7147534215782858650,
   properties: {
-    r'boardComments': PropertySchema(
-      id: 0,
-      name: r'boardComments',
-      type: IsarType.objectList,
-      target: r'BoardComment',
-    ),
     r'comments': PropertySchema(
-      id: 1,
+      id: 0,
       name: r'comments',
       type: IsarType.objectList,
       target: r'BoardComment',
     ),
     r'content': PropertySchema(
-      id: 2,
+      id: 1,
       name: r'content',
       type: IsarType.string,
     ),
     r'createdAt': PropertySchema(
-      id: 3,
+      id: 2,
       name: r'createdAt',
       type: IsarType.dateTime,
     ),
     r'createdBy': PropertySchema(
-      id: 4,
+      id: 3,
       name: r'createdBy',
       type: IsarType.string,
     ),
     r'isDeleted': PropertySchema(
-      id: 5,
+      id: 4,
       name: r'isDeleted',
       type: IsarType.bool,
     ),
     r'isRead': PropertySchema(
-      id: 6,
+      id: 5,
       name: r'isRead',
       type: IsarType.bool,
     ),
     r'likeCount': PropertySchema(
-      id: 7,
+      id: 6,
       name: r'likeCount',
       type: IsarType.long,
     ),
     r'title': PropertySchema(
-      id: 8,
+      id: 7,
       name: r'title',
       type: IsarType.string,
     ),
     r'updatedAt': PropertySchema(
-      id: 9,
+      id: 8,
       name: r'updatedAt',
       type: IsarType.dateTime,
     )
@@ -118,20 +112,6 @@ int _boardEstimateSize(
 ) {
   var bytesCount = offsets.last;
   {
-    final list = object.boardComments;
-    if (list != null) {
-      bytesCount += 3 + list.length * 3;
-      {
-        final offsets = allOffsets[BoardComment]!;
-        for (var i = 0; i < list.length; i++) {
-          final value = list[i];
-          bytesCount +=
-              BoardCommentSchema.estimateSize(value, offsets, allOffsets);
-        }
-      }
-    }
-  }
-  {
     final list = object.comments;
     if (list != null) {
       bytesCount += 3 + list.length * 3;
@@ -166,22 +146,16 @@ void _boardSerialize(
     offsets[0],
     allOffsets,
     BoardCommentSchema.serialize,
-    object.boardComments,
-  );
-  writer.writeObjectList<BoardComment>(
-    offsets[1],
-    allOffsets,
-    BoardCommentSchema.serialize,
     object.comments,
   );
-  writer.writeString(offsets[2], object.content);
-  writer.writeDateTime(offsets[3], object.createdAt);
-  writer.writeString(offsets[4], object.createdBy);
-  writer.writeBool(offsets[5], object.isDeleted);
-  writer.writeBool(offsets[6], object.isRead);
-  writer.writeLong(offsets[7], object.likeCount);
-  writer.writeString(offsets[8], object.title);
-  writer.writeDateTime(offsets[9], object.updatedAt);
+  writer.writeString(offsets[1], object.content);
+  writer.writeDateTime(offsets[2], object.createdAt);
+  writer.writeString(offsets[3], object.createdBy);
+  writer.writeBool(offsets[4], object.isDeleted);
+  writer.writeBool(offsets[5], object.isRead);
+  writer.writeLong(offsets[6], object.likeCount);
+  writer.writeString(offsets[7], object.title);
+  writer.writeDateTime(offsets[8], object.updatedAt);
 }
 
 Board _boardDeserialize(
@@ -191,21 +165,21 @@ Board _boardDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Board(
-    reader.readStringOrNull(offsets[8]),
-    reader.readString(offsets[2]),
+    reader.readStringOrNull(offsets[7]),
+    reader.readString(offsets[1]),
     comments: reader.readObjectList<BoardComment>(
-      offsets[1],
+      offsets[0],
       BoardCommentSchema.deserialize,
       allOffsets,
       BoardComment(),
     ),
-    createdBy: reader.readString(offsets[4]),
-    isDeleted: reader.readBoolOrNull(offsets[5]),
-    likeCount: reader.readLongOrNull(offsets[7]),
+    createdBy: reader.readString(offsets[3]),
+    isDeleted: reader.readBoolOrNull(offsets[4]),
+    likeCount: reader.readLongOrNull(offsets[6]),
   );
   object.id = id;
-  object.isRead = reader.readBool(offsets[6]);
-  object.updatedAt = reader.readDateTimeOrNull(offsets[9]);
+  object.isRead = reader.readBool(offsets[5]);
+  object.updatedAt = reader.readDateTimeOrNull(offsets[8]);
   return object;
 }
 
@@ -224,27 +198,20 @@ P _boardDeserializeProp<P>(
         BoardComment(),
       )) as P;
     case 1:
-      return (reader.readObjectList<BoardComment>(
-        offset,
-        BoardCommentSchema.deserialize,
-        allOffsets,
-        BoardComment(),
-      )) as P;
+      return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readString(offset)) as P;
-    case 3:
       return (reader.readDateTime(offset)) as P;
-    case 4:
+    case 3:
       return (reader.readString(offset)) as P;
-    case 5:
+    case 4:
       return (reader.readBoolOrNull(offset)) as P;
-    case 6:
+    case 5:
       return (reader.readBool(offset)) as P;
-    case 7:
+    case 6:
       return (reader.readLongOrNull(offset)) as P;
-    case 8:
+    case 7:
       return (reader.readStringOrNull(offset)) as P;
-    case 9:
+    case 8:
       return (reader.readDateTimeOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -644,107 +611,6 @@ extension BoardQueryWhere on QueryBuilder<Board, Board, QWhereClause> {
 }
 
 extension BoardQueryFilter on QueryBuilder<Board, Board, QFilterCondition> {
-  QueryBuilder<Board, Board, QAfterFilterCondition> boardCommentsIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'boardComments',
-      ));
-    });
-  }
-
-  QueryBuilder<Board, Board, QAfterFilterCondition> boardCommentsIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'boardComments',
-      ));
-    });
-  }
-
-  QueryBuilder<Board, Board, QAfterFilterCondition> boardCommentsLengthEqualTo(
-      int length) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'boardComments',
-        length,
-        true,
-        length,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<Board, Board, QAfterFilterCondition> boardCommentsIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'boardComments',
-        0,
-        true,
-        0,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<Board, Board, QAfterFilterCondition> boardCommentsIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'boardComments',
-        0,
-        false,
-        999999,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<Board, Board, QAfterFilterCondition> boardCommentsLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'boardComments',
-        0,
-        true,
-        length,
-        include,
-      );
-    });
-  }
-
-  QueryBuilder<Board, Board, QAfterFilterCondition>
-      boardCommentsLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'boardComments',
-        length,
-        include,
-        999999,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<Board, Board, QAfterFilterCondition> boardCommentsLengthBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'boardComments',
-        lower,
-        includeLower,
-        upper,
-        includeUpper,
-      );
-    });
-  }
-
   QueryBuilder<Board, Board, QAfterFilterCondition> commentsIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1529,13 +1395,6 @@ extension BoardQueryFilter on QueryBuilder<Board, Board, QFilterCondition> {
 }
 
 extension BoardQueryObject on QueryBuilder<Board, Board, QFilterCondition> {
-  QueryBuilder<Board, Board, QAfterFilterCondition> boardCommentsElement(
-      FilterQuery<BoardComment> q) {
-    return QueryBuilder.apply(this, (query) {
-      return query.object(q, r'boardComments');
-    });
-  }
-
   QueryBuilder<Board, Board, QAfterFilterCondition> commentsElement(
       FilterQuery<BoardComment> q) {
     return QueryBuilder.apply(this, (query) {
@@ -1815,13 +1674,6 @@ extension BoardQueryProperty on QueryBuilder<Board, Board, QQueryProperty> {
   }
 
   QueryBuilder<Board, List<BoardComment>?, QQueryOperations>
-      boardCommentsProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'boardComments');
-    });
-  }
-
-  QueryBuilder<Board, List<BoardComment>?, QQueryOperations>
       commentsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'comments');
@@ -1892,6 +1744,16 @@ const BoardCommentSchema = Schema(
       id: 0,
       name: r'content',
       type: IsarType.string,
+    ),
+    r'createdAt': PropertySchema(
+      id: 1,
+      name: r'createdAt',
+      type: IsarType.dateTime,
+    ),
+    r'createdBy': PropertySchema(
+      id: 2,
+      name: r'createdBy',
+      type: IsarType.string,
     )
   },
   estimateSize: _boardCommentEstimateSize,
@@ -1912,6 +1774,12 @@ int _boardCommentEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  {
+    final value = object.createdBy;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -1922,6 +1790,8 @@ void _boardCommentSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.content);
+  writer.writeDateTime(offsets[1], object.createdAt);
+  writer.writeString(offsets[2], object.createdBy);
 }
 
 BoardComment _boardCommentDeserialize(
@@ -1930,8 +1800,11 @@ BoardComment _boardCommentDeserialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = BoardComment();
-  object.content = reader.readStringOrNull(offsets[0]);
+  final object = BoardComment(
+    content: reader.readStringOrNull(offsets[0]),
+    createdBy: reader.readStringOrNull(offsets[2]),
+  );
+  object.createdAt = reader.readDateTimeOrNull(offsets[1]);
   return object;
 }
 
@@ -1943,6 +1816,10 @@ P _boardCommentDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
+      return (reader.readStringOrNull(offset)) as P;
+    case 1:
+      return (reader.readDateTimeOrNull(offset)) as P;
+    case 2:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2100,6 +1977,234 @@ extension BoardCommentQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'content',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'createdAt',
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'createdAt',
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdAtEqualTo(DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'createdAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdAtGreaterThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'createdAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdAtLessThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'createdAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdAtBetween(
+    DateTime? lower,
+    DateTime? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'createdAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdByIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'createdBy',
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdByIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'createdBy',
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdByEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'createdBy',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdByGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'createdBy',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdByLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'createdBy',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdByBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'createdBy',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdByStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'createdBy',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdByEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'createdBy',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdByContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'createdBy',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdByMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'createdBy',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdByIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'createdBy',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<BoardComment, BoardComment, QAfterFilterCondition>
+      createdByIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'createdBy',
         value: '',
       ));
     });
