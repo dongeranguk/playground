@@ -3,6 +3,8 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  firebase_auth
+  firebase_core
   irondash_engine_context
   isar_flutter_libs
   super_native_extensions
