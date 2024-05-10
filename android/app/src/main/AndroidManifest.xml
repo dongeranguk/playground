@@ -25,7 +25,8 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:host="wiseinfo.page.link" android:scheme="https" />
+<!--                <data android:host="wiseinfo.page.link" android:scheme="https" />-->
+                <!--<data android:host="ninth-physics-420514.firebaseapp.com" android:scheme="https" />-->
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
