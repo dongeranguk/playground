@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "330402694051",
+    "project_id": "ninth-physics-420514",
+    "storage_bucket": "ninth-physics-420514.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:330402694051:android:90d2940fb69192908a1016",
+        "android_client_info": {
+          "package_name": "com.example.playground"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "330402694051-0psm3nnqkqnbjnp7slk0ms3v6id6v7s8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.playground",
+            "certificate_hash": "9caec9ab947be90d155d862f8c24207d0b159e65"
+          }
+        },
+        {
+          "client_id": "330402694051-ptbstvu3usvvsaj3npd5l702erueitiv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAD_a3MXGOG4rgaKueyfdemTNQMgJy30aE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "330402694051-1nuc8cufvmijf9i0sauhvvcas0jja04q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "330402694051-gtvkehkeh9ennei18tvpuf09aorophdb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.playground"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

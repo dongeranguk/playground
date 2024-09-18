@@ -1,57 +1,57 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:core';
+
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:playground/screen/main/tab/mail/s_mail_write.dart';
-import 'package:playground/screen/main/tab/mail/vo/vo_mail.dart';
-import 'package:playground/screen/main/tab/mail/vo/vo_mail_dummy.dart';
-import 'package:playground/screen/main/tab/mail/vo/vo_simple_mail.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:playground/app.dart';
+import 'package:playground/screen/main/tab/mail/f_mail.riverpod.dart';
 import 'package:playground/screen/main/tab/mail/w_mail_item.dart';
 
-class MailFragment extends StatefulWidget {
+class MailFragment extends ConsumerWidget {
   final String tabName;
 
-  const MailFragment({required this.tabName, super.key});
+  const MailFragment({super.key, required this.tabName});
 
-  @override
-  State<MailFragment> createState() => _MailFragmentState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mailState = ref.watch(userMailsProvider);
 
-class _MailFragmentState extends State<MailFragment> {
-  late String _tabName;
-  late List<Mail> _mailList;
-
-  @override
-  void initState() {
-    _tabName = widget.tabName;
-    _mailList = mailList;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: _mailList
-              .map(
-                (element) => MailItem(
-                    mail: SimpleMail(
-                  element.id,
-                  element.from,
-                  element.content,
-                  element.createdAt,
-                  element.isRead,
-                )),
-              )
-              .toList(),
+      body: mailState.when(
+        data: (mailList) => NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (scrollInfo.metrics.pixels ==
+                scrollInfo.metrics.maxScrollExtent) {
+              ref.read(userMailsProvider.notifier).fetchNextPage();
+            }
+            return false;
+          },
+          child: ListView.builder(
+              itemCount: mailList.length,
+              itemBuilder: (context, index) {
+                final mail = mailList[index];
+                return FutureBuilder(
+                    future: ref
+                        .read(userMailsProvider.notifier)
+                        .fetchMessageDetail(mail.id!),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return ListTile(title: Text('Loading...'));
+                      } else if (snapshot.hasError) {
+                        return ListTile(
+                            title: Text('Error : ${snapshot.error}'));
+                      } else if (snapshot.hasData) {
+                        final message = snapshot.data!;
+                        return ListTile(
+                            title: Text(
+                                message.snippet ?? 'No snippet available'),
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => MailItem(raw: message.raw ?? ''))));
+                      } else {
+                        return ListTile(title: Text('No data available'));
+                      }
+                    });
+              }),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(CupertinoIcons.pencil_circle),
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const WriteMailScreen()));
-        },
+        loading: () => Center(child: CircularProgressIndicator()),
+        error: (error, stack) => Center(child: Text('Error : $error')),
       ),
     );
   }

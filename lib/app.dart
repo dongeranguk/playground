@@ -19,7 +19,8 @@ class _WiseAppState extends State<WiseApp> {
 
   @override
   void initState() {
-    auth.authStateChanges().listen((User? user) {
+
+    auth.authStateChanges().listen((user) {
       if(user != null) {
         this.user = user;
       }
@@ -34,7 +35,7 @@ class _WiseAppState extends State<WiseApp> {
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.black)),
       navigatorKey: navigatorKey,
-      home: user != null ? const HomeScreen() : LoginScreen(fireBaseAuth: auth),
+      home: user != null ? const HomeScreen() : const LoginScreen(),
       routes: {
         '/signInWithEmail' : (context) => HomeScreen()
       },
